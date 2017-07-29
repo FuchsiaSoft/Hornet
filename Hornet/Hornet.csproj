@@ -110,6 +110,12 @@
   <ItemGroup>
     <None Include="Resources\logo_UNf_icon.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Hornet.ViewModel\Hornet.ViewModel.csproj">
+      <Project>{a6aacb15-1b9a-4c35-9971-28d9c72bb610}</Project>
+      <Name>Hornet.ViewModel</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

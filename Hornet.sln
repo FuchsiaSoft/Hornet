@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hornet.IO", "Hornet.IO\Horn
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hornet.ViewModel", "Hornet.ViewModel\Hornet.ViewModel.csproj", "{A6AACB15-1B9A-4C35-9971-28D9C72BB610}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hornet.Model", "Hornet.Model\Hornet.Model.csproj", "{3A67F967-939C-4B78-8812-993B672D8E43}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A6AACB15-1B9A-4C35-9971-28D9C72BB610}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6AACB15-1B9A-4C35-9971-28D9C72BB610}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6AACB15-1B9A-4C35-9971-28D9C72BB610}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A67F967-939C-4B78-8812-993B672D8E43}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A67F967-939C-4B78-8812-993B672D8E43}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A67F967-939C-4B78-8812-993B672D8E43}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A67F967-939C-4B78-8812-993B672D8E43}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
