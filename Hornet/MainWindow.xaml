@@ -58,11 +58,31 @@
         </Grid.RowDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="55"/>
+                <RowDefinition Height="20"/>
                 <RowDefinition/>
                 <RowDefinition Height="20"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <DockPanel Grid.Row="0">
+                <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Fill="Black" HorizontalAlignment="Right"
+                          Stretch="Uniform" Margin="5,2,5,2" Height="16"
+                          Data="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M4,9V12C4,14.21 7.58,16 12,16C16.42,16 20,14.21 20,12V9C20,11.21 16.42,13 12,13C7.58,13 4,11.21 4,9M4,14V17C4,19.21 7.58,21 12,21C16.42,21 20,19.21 20,17V14C20,16.21 16.42,18 12,18C7.58,18 4,16.21 4,14Z"/>
+                        <TextBlock Style="{StaticResource Header}" Text="DATABASE MANAGEMENT" Margin="5,3,5,3"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Hash Sets" HorizontalAlignment="Left" Margin="10,3,10,3" Width="150"/>
+                    <Button Content="Regular Expression Sets" HorizontalAlignment="Left" Margin="10,3,10,3" Width="150"/>
+                </StackPanel>
+
+
+            </DockPanel>
+            <Separator Grid.Row="1" Margin="10,0,10,0" VerticalAlignment="Center"/>
+            <DockPanel Grid.Row="2">
                 <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
                     <StackPanel Orientation="Horizontal">
                         <Path Fill="Black" HorizontalAlignment="Right"
@@ -107,8 +127,8 @@
                     </DockPanel>
                 </Grid>
             </DockPanel>
-            <Separator Grid.Row="1" Margin="10,0,10,0" VerticalAlignment="Center"/>
-            <DockPanel Grid.Row="2">
+            <Separator Grid.Row="3" Margin="10,0,10,0" VerticalAlignment="Center"/>
+            <DockPanel Grid.Row="4">
                 <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
                     <StackPanel Orientation="Horizontal">
                         <Path Fill="Black" HorizontalAlignment="Right"
@@ -157,31 +177,12 @@
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="80"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="280"/>
+                <RowDefinition Height="400"/>
                 <RowDefinition Height="20"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
+            
             <DockPanel Grid.Row="0">
-                <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
-                    <StackPanel Orientation="Horizontal">
-                        <Path Fill="Black" HorizontalAlignment="Right"
-                          Stretch="Uniform" Margin="5,2,5,2" Height="16"
-                          Data="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M4,9V12C4,14.21 7.58,16 12,16C16.42,16 20,14.21 20,12V9C20,11.21 16.42,13 12,13C7.58,13 4,11.21 4,9M4,14V17C4,19.21 7.58,21 12,21C16.42,21 20,19.21 20,17V14C20,16.21 16.42,18 12,18C7.58,18 4,16.21 4,14Z"/>
-                        <TextBlock Style="{StaticResource Header}" Text="DATABASE MANAGEMENT" Margin="5,3,5,3"/>
-                    </StackPanel>
-                </Border>
-                
-                <StackPanel>
-                    <Button Content="Create and edit hash sets" HorizontalAlignment="Left" Margin="10,3,10,3" Width="250"/>
-                    <Button Content="Create and edit regular expression sets" HorizontalAlignment="Left" Margin="10,3,10,3" Width="250"/>
-                </StackPanel>
-
-
-            </DockPanel>
-            <Separator Grid.Row="1" Margin="10,0,10,0" VerticalAlignment="Center"/>
-            <DockPanel Grid.Row="2">
                 <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
                     <StackPanel Orientation="Horizontal">
                         <Path Fill="Black" HorizontalAlignment="Right"
@@ -272,10 +273,77 @@
                         </Grid>
 
                     </GroupBox>
+
+                    <GroupBox Header="REGULAR EXPRESSION SETTINGS">
+                        <Grid>
+                            <Path Fill="Black" HorizontalAlignment="Right" VerticalAlignment="Top"
+                                  Stretch="UniformToFill" Margin="5" Width="40" Opacity="0.1"
+                                  Data="F1 M 19,17L 41.25,17L 54,29.75L 54,37L 50,37L 50,34L 37,34L 37,21L 23,21L 23,55L 34.75,55L 35.25,59L 19,59L 19,17 Z M 41,22.25L 41,30L 48.75,30L 41,22.25 Z M 42,55L 51,55L 50,59L 43,59L 42,55 Z M 49,38L 53,38C 53,38 56,38 56,43L 56,46C 56,46 56,49 60,49L 60,52C 56,52 56,55 56,55L 56,58C 56,63 53,63 53,63L 49,63L 49,60L 51,60C 53,60 53,57 53,57L 53,53.5C 53,50.5343 55.9317,50.5004 55.9988,50.5C 55.9321,50.4996 53,50.4659 53,47.5L 53,44C 53,44 53,41 51,41L 49,41L 49,38 Z M 44,38L 44,41L 42,41C 40,41 40,44 40,44L 40,47.5C 40,50.4659 37.0678,50.4996 37.0012,50.5C 37.0683,50.5004 40,50.5343 40,53.5L 40,57C 40,57 40,60 42,60L 44,60L 44,63L 40,63C 40,63 37,63 37,58L 37,55C 37,55 37,52 33,52L 33,49C 37,49 37,46 37,46L 37,43C 37,38 40,38 40,38L 44,38 Z"/>
+
+                            <StackPanel>
+                                <CheckBox x:Name="chkAlwaysText">
+                                    <TextBlock>
+                                        <Run>Always attempt text decoding regardless of type</Run>
+                                        <Run Foreground="Red" FontWeight="Bold" FontSize="7">(MAY YIELD FALSE POSITIVES)</Run>
+                                    </TextBlock>
+                                </CheckBox>
+                                <Grid IsEnabled="{Binding ElementName=chkAlwaysText, Path=IsChecked}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Orientation="Vertical" Grid.Column="0">
+                                        <CheckBox Content="ASCII" />
+                                        <CheckBox Content="UTF16 (Unicode)" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Grid.Column="1">
+                                        <CheckBox Content="UTF7" />
+                                        <CheckBox Content="UTF16 (Unicode BE)" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Grid.Column="2">
+                                        <CheckBox Content="UTF8" />
+                                        <CheckBox Content="UTF32" />
+                                    </StackPanel>
+                                </Grid>
+                                <Grid IsEnabled="{Binding ElementName=chkAlwaysText, Path=IsChecked}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" FontSize="10" Padding="0" Margin="20,0,3,0" Content="File size limit for attempting text decode:"/>
+                                    <TextBox Grid.Column="1" FontSize="10"/>
+                                    <Label Grid.Column="2" FontSize="10" Padding="0" Content="MB"/>
+                                </Grid>
+                                <CheckBox Content="Attempt complex file formats" x:Name="chkComplexFormats"/>
+                                <Grid IsEnabled="{Binding ElementName=chkComplexFormats, Path=IsChecked}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Orientation="Vertical" Grid.Column="0">
+                                        <CheckBox Content="Open XML (docx etc)" />
+                                        <CheckBox Content="PDF" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Grid.Column="1">
+                                        <CheckBox Content="MSG (Outlook)" />
+                                        <CheckBox Content="Binary Office (doc etc)" />
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Grid.Column="2">
+                                        <CheckBox Content="RTF" />
+                                        <CheckBox Content="TXT" />
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                        
+                    </GroupBox>
                 </StackPanel>
             </DockPanel>
-            <Separator Grid.Row="3" Margin="10,0,10,0" VerticalAlignment="Center"/>
-            <DockPanel Grid.Row="4">
+            <Separator Grid.Row="1" Margin="10,0,10,0" VerticalAlignment="Center"/>
+            <DockPanel Grid.Row="2">
                 <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
                     <StackPanel Orientation="Horizontal">
                         <Path Fill="Black" HorizontalAlignment="Right"
