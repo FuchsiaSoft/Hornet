@@ -451,14 +451,19 @@
                                         <CheckBox Content="PDF" />
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Grid.Column="1">
-                                        <CheckBox Content="MSG (Outlook)" x:Name="chkIncludeMSG" />
                                         <CheckBox Content="Binary Office (doc etc)" />
+                                        <CheckBox Content="RTF" />
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Grid.Column="2">
-                                        <CheckBox Content="RTF" />
                                         <CheckBox Content="TXT" />
                                     </StackPanel>
                                 </Grid>
+                                <CheckBox x:Name="chkIncludeMSG">
+                                    <TextBlock>
+                                        <Run>Include MSG (Outlook emails)</Run>
+                                        <Run Foreground="Red" FontWeight="Bold" FontSize="7">(WILL USE LOCAL DISK %TEMP%)</Run>
+                                    </TextBlock>
+                                </CheckBox>
                                 <CheckBox Content="Include attachments to MSG files (only includes complex formats selected above)" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
                                 <CheckBox Content="Check MSG body without parsing HTML" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
                                 <CheckBox Content="Include MSG sender and recipient information" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
