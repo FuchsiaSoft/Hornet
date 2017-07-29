@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Hornet"
         xmlns:conv="clr-namespace:Hornet.Converters"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="800"
+        Title="HORNET - Scan control centre" Height="700" Width="800"
         ResizeMode="NoResize">
     <Window.Resources>
 
@@ -56,33 +56,17 @@
             <RowDefinition/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Column="0">
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="55"/>
-                <RowDefinition Height="20"/>
                 <RowDefinition/>
                 <RowDefinition Height="20"/>
                 <RowDefinition/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="200"/>
             </Grid.RowDefinitions>
-            <DockPanel Grid.Row="0">
-                <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
-                    <StackPanel Orientation="Horizontal">
-                        <Path Fill="Black" HorizontalAlignment="Right"
-                          Stretch="Uniform" Margin="5,2,5,2" Height="16"
-                          Data="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M4,9V12C4,14.21 7.58,16 12,16C16.42,16 20,14.21 20,12V9C20,11.21 16.42,13 12,13C7.58,13 4,11.21 4,9M4,14V17C4,19.21 7.58,21 12,21C16.42,21 20,19.21 20,17V14C20,16.21 16.42,18 12,18C7.58,18 4,16.21 4,14Z"/>
-                        <TextBlock Style="{StaticResource Header}" Text="DATABASE MANAGEMENT" Margin="5,3,5,3"/>
-                    </StackPanel>
-                </Border>
-
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="Hash Sets" HorizontalAlignment="Left" Margin="10,3,10,3" Width="150"/>
-                    <Button Content="Regular Expression Sets" HorizontalAlignment="Left" Margin="10,3,10,3" Width="150"/>
-                </StackPanel>
-
-
-            </DockPanel>
+            
             <Separator Grid.Row="1" Margin="10,0,10,0" VerticalAlignment="Center"/>
-            <DockPanel Grid.Row="2">
+            <DockPanel Grid.Row="0">
                 <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
                     <StackPanel Orientation="Horizontal">
                         <Path Fill="Black" HorizontalAlignment="Right"
@@ -128,7 +112,7 @@
                 </Grid>
             </DockPanel>
             <Separator Grid.Row="3" Margin="10,0,10,0" VerticalAlignment="Center"/>
-            <DockPanel Grid.Row="4">
+            <DockPanel Grid.Row="2">
                 <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
                     <StackPanel Orientation="Horizontal">
                         <Path Fill="Black" HorizontalAlignment="Right"
@@ -171,18 +155,118 @@
                             selected regex sets go here
                         </ListView>
                     </DockPanel>
+                    
                 </Grid>
+            </DockPanel>
+            <DockPanel Grid.Row="4">
+                <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Fill="Black" HorizontalAlignment="Right"
+                          Stretch="Uniform" Margin="5,2,5,2" Height="16"
+                          Data="F1 M 20,17L 43.25,17L 56,29.75L 56,40L 52,37.5L 52,34L 39,34L 39,21L 24,21L 24,55L 36,55L 32,59L 20,59L 20,17 Z M 43,22.25L 43,30L 50.75,30L 43,22.25 Z M 48,38C 53.5228,38 58,42.4772 58,48C 58,53.5229 53.5228,58 48,58C 46.1455,58 44.4089,57.4952 42.9201,56.6155L 36.1213,63.4142C 35.3403,64.1953 34.0739,64.1953 33.2929,63.4142L 32.5858,62.7071C 31.8047,61.9261 31.8047,60.6597 32.5858,59.8787L 39.3845,53.0799C 38.5048,51.5911 38,49.8545 38,48C 38,42.4772 42.4771,38 48,38 Z M 48,42C 44.6863,42 42,44.6863 42,48C 42,51.3137 44.6863,54 48,54C 51.3137,54 54,51.3137 54,48C 54,44.6863 51.3137,42 48,42 Z"/>
+                        <TextBlock Style="{StaticResource Header}" Text="SCAN PROCESS MANAGEMENT" Margin="5,3,5,3"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel>
+                    <GroupBox Header="FILE SYSTEM AND CREDENTIALS">
+                        <StackPanel>
+                            <DockPanel>
+                                <Label Content="Directory:" Width="100" VerticalAlignment="Center" Padding="0"/>
+                                <Button Width="100" DockPanel.Dock="Right" Margin="1">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Fill="Orange" HorizontalAlignment="Right"
+                                                Stretch="Uniform" Margin="5,2,5,2" Width="15"
+                                                Data="F1 M 21,30.0001L 55.9999,30.0001L 55.9999,50L 21,50L 21,30.0001 Z M 52,28L 37,28C 38,25 39.4999,24.0001 39.4999,24.0001L 50.75,24C 51.3023,24 52,24.6977 52,25.25L 52,28 Z"/>
+                                        <Label Content="Browse..." Padding="0"/>
+                                    </StackPanel>
+                                </Button>
+                                <TextBox Margin="1" VerticalContentAlignment="Center"/>
+                            </DockPanel>
+                            <DockPanel>
+                                <Label Width="100" Content="Domain:" Padding="0" VerticalAlignment="Center"/>
+                                <TextBox Margin="1"/>
+                            </DockPanel>
+                            <DockPanel>
+                                <Label Width="100" Content="User:" Padding="0" VerticalAlignment="Center"/>
+                                <TextBox Margin="1"/>
+                            </DockPanel>
+                            <DockPanel>
+                                <Label Width="100" Content="Password:" Padding="0" VerticalAlignment="Center"/>
+                                <PasswordBox Margin="1"/>
+                            </DockPanel>
+                        </StackPanel>
+
+                    </GroupBox>
+
+                    <StackPanel Orientation="Horizontal">
+
+                        <Button HorizontalAlignment="Left" Margin="10,3,10,3" Width="80">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Fill="ForestGreen" HorizontalAlignment="Right"
+                                     Stretch="Uniform" Margin="5,2,5,2" Width="10"
+                                     Data="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z"/>
+                                <Label Content="Start"/>
+                            </StackPanel>
+                        </Button>
+                        <Button HorizontalAlignment="Left" Margin="10,3,10,3" Width="80">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Fill="Orange" HorizontalAlignment="Right"
+                                        Stretch="Uniform" Margin="5,2,5,2" Width="10"
+                                        Data="F1 M 26.9167,23.75L 33.25,23.75L 33.25,52.25L 26.9167,52.25L 26.9167,23.75 Z M 42.75,23.75L 49.0833,23.75L 49.0833,52.25L 42.75,52.25L 42.75,23.75 Z"/>
+                                <Label Content="Pause"/>
+                            </StackPanel>
+                        </Button>
+                        <Button HorizontalAlignment="Left" Margin="10,3,10,3" Width="80">
+                            <StackPanel Orientation="Horizontal">
+                                <Path Fill="DarkRed" HorizontalAlignment="Right"
+                                        Stretch="Uniform" Margin="5,2,5,2" Width="10"
+                                        Data="F1 M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z"/>
+                                <Label Content="Cancel"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                    </Grid>
+                </StackPanel>
+
+
             </DockPanel>
         </Grid>
 
-        <Grid Grid.Column="1">
+        <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="400"/>
+                <RowDefinition Height="55"/>
                 <RowDefinition Height="20"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            
             <DockPanel Grid.Row="0">
+                <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
+                    <StackPanel Orientation="Horizontal">
+                        <Path Fill="Black" HorizontalAlignment="Right"
+                          Stretch="Uniform" Margin="5,2,5,2" Height="16"
+                          Data="M12,3C7.58,3 4,4.79 4,7C4,9.21 7.58,11 12,11C16.42,11 20,9.21 20,7C20,4.79 16.42,3 12,3M4,9V12C4,14.21 7.58,16 12,16C16.42,16 20,14.21 20,12V9C20,11.21 16.42,13 12,13C7.58,13 4,11.21 4,9M4,14V17C4,19.21 7.58,21 12,21C16.42,21 20,19.21 20,17V14C20,16.21 16.42,18 12,18C7.58,18 4,16.21 4,14Z"/>
+                        <TextBlock Style="{StaticResource Header}" Text="LOCAL DATABASE CONFIGURATION" Margin="5,3,5,3"/>
+                    </StackPanel>
+                </Border>
+
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Hash Sets" HorizontalAlignment="Left" Margin="10,3,10,3" Width="150"/>
+                    <Button Content="Regular Expression Sets" HorizontalAlignment="Left" Margin="10,3,10,3" Width="150"/>
+                </StackPanel>
+
+
+            </DockPanel>
+
+            <Separator Grid.Row="1" Margin="10,0,10,0" VerticalAlignment="Center"/>
+
+            <DockPanel Grid.Row="2">
                 <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
                     <StackPanel Orientation="Horizontal">
                         <Path Fill="Black" HorizontalAlignment="Right"
@@ -218,6 +302,26 @@
                                   Stretch="UniformToFill" Margin="5" Width="40" Opacity="0.1"
                                   Data="M6,4H18V5H21V7H18V9H21V11H18V13H21V15H18V17H21V19H18V20H6V19H3V17H6V15H3V13H6V11H3V9H6V7H3V5H6V4M11,15V18H12V15H11M13,15V18H14V15H13M15,15V18H16V15H15Z"/>
                             <StackPanel Margin="2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" FontSize="10" Padding="0" Margin="20,0,3,0" Content="Max. size to attempt hashing:"/>
+                                    <TextBox Grid.Column="1" FontSize="10" HorizontalContentAlignment="Right"/>
+                                    <Label Grid.Column="2" FontSize="10" Padding="0" Content="MB"/>
+                                </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" FontSize="10" Padding="0" Margin="20,0,3,0" Content="Max. size to attempt regular expression:"/>
+                                    <TextBox Grid.Column="1" FontSize="10" HorizontalContentAlignment="Right"/>
+                                    <Label Grid.Column="2" FontSize="10" Padding="0" Content="MB"/>
+                                </Grid>
                                 <CheckBox Content="Fully load files in-memory when running multiple hashes" x:Name="chkInMemory"/>
                                 <Grid IsEnabled="{Binding ElementName=chkInMemory, Path=IsChecked}">
                                     <Grid.ColumnDefinitions>
@@ -226,7 +330,7 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Column="0" FontSize="10" Padding="0" Margin="20,0,3,0" Content="File size limit for in-memory loading:"/>
-                                    <TextBox Grid.Column="1" FontSize="10"/>
+                                    <TextBox Grid.Column="1" FontSize="10" HorizontalContentAlignment="Right"/>
                                     <Label Grid.Column="2" FontSize="10" Padding="0" Content="MB"/>
                                 </Grid>
                                 <CheckBox x:Name="chkInMemoryZip">
@@ -242,10 +346,19 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Column="0" FontSize="10" Padding="0" Margin="20,0,3,0" Content="File size limit for in-memory unpacking:"/>
-                                    <TextBox Grid.Column="1" FontSize="10"/>
+                                    <TextBox Grid.Column="1" FontSize="10" HorizontalContentAlignment="Right"/>
                                     <Label Grid.Column="2" FontSize="10" Padding="0" Content="MB"/>
                                 </Grid>
                                 <CheckBox Content="Use local disk %TEMP% for files over this limit" IsEnabled="{Binding ElementName=chkInMemoryZip, Path=IsChecked}"/>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" FontSize="10" Padding="0" Margin="20,0,3,0" Content="Maximum file queue size:"/>
+                                    <TextBox Grid.Column="1" FontSize="10" HorizontalContentAlignment="Right"/>
+                                </Grid>
                                 <CheckBox Content="Fully enumerate directories whilst working" x:Name="chkFullyEnumerate"/>
                                 <Grid IsEnabled="{Binding ElementName=chkFullyEnumerate, Path=IsChecked, Converter={StaticResource BoolInverter}}">
                                     <Grid.ColumnDefinitions>
@@ -254,7 +367,7 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Column="0" FontSize="10" Padding="0" Margin="20,0,3,0" Content="Maximum working directory queue size:"/>
-                                    <TextBox Grid.Column="1" FontSize="10"/>
+                                    <TextBox Grid.Column="1" FontSize="10" HorizontalContentAlignment="Right"/>
                                 </Grid>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -281,6 +394,16 @@
                                   Data="F1 M 19,17L 41.25,17L 54,29.75L 54,37L 50,37L 50,34L 37,34L 37,21L 23,21L 23,55L 34.75,55L 35.25,59L 19,59L 19,17 Z M 41,22.25L 41,30L 48.75,30L 41,22.25 Z M 42,55L 51,55L 50,59L 43,59L 42,55 Z M 49,38L 53,38C 53,38 56,38 56,43L 56,46C 56,46 56,49 60,49L 60,52C 56,52 56,55 56,55L 56,58C 56,63 53,63 53,63L 49,63L 49,60L 51,60C 53,60 53,57 53,57L 53,53.5C 53,50.5343 55.9317,50.5004 55.9988,50.5C 55.9321,50.4996 53,50.4659 53,47.5L 53,44C 53,44 53,41 51,41L 49,41L 49,38 Z M 44,38L 44,41L 42,41C 40,41 40,44 40,44L 40,47.5C 40,50.4659 37.0678,50.4996 37.0012,50.5C 37.0683,50.5004 40,50.5343 40,53.5L 40,57C 40,57 40,60 42,60L 44,60L 44,63L 40,63C 40,63 37,63 37,58L 37,55C 37,55 37,52 33,52L 33,49C 37,49 37,46 37,46L 37,43C 37,38 40,38 40,38L 44,38 Z"/>
 
                             <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220"/>
+                                        <ColumnDefinition Width="80"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Grid.Column="0" FontSize="10" Padding="0" Margin="20,0,3,0" Content="Regular expression check timeout:"/>
+                                    <TextBox Grid.Column="1" FontSize="10" HorizontalContentAlignment="Right"/>
+                                    <Label Grid.Column="2" FontSize="10" Padding="0" Content="seconds"/>
+                                </Grid>
                                 <CheckBox x:Name="chkAlwaysText">
                                     <TextBlock>
                                         <Run>Always attempt text decoding regardless of type</Run>
@@ -313,7 +436,7 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
                                     <Label Grid.Column="0" FontSize="10" Padding="0" Margin="20,0,3,0" Content="File size limit for attempting text decode:"/>
-                                    <TextBox Grid.Column="1" FontSize="10"/>
+                                    <TextBox Grid.Column="1" FontSize="10" HorizontalContentAlignment="Right"/>
                                     <Label Grid.Column="2" FontSize="10" Padding="0" Content="MB"/>
                                 </Grid>
                                 <CheckBox Content="Attempt complex file formats" x:Name="chkComplexFormats"/>
@@ -328,7 +451,7 @@
                                         <CheckBox Content="PDF" />
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Grid.Column="1">
-                                        <CheckBox Content="MSG (Outlook)" />
+                                        <CheckBox Content="MSG (Outlook)" x:Name="chkIncludeMSG" />
                                         <CheckBox Content="Binary Office (doc etc)" />
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Grid.Column="2">
@@ -336,6 +459,10 @@
                                         <CheckBox Content="TXT" />
                                     </StackPanel>
                                 </Grid>
+                                <CheckBox Content="Include attachments to MSG files (only includes complex formats selected above)" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
+                                <CheckBox Content="Check MSG body without parsing HTML" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
+                                <CheckBox Content="Include MSG sender and recipient information" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
+                                <CheckBox Content="Include MSG subject" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
                             </StackPanel>
                         </Grid>
                         
@@ -343,47 +470,7 @@
                 </StackPanel>
             </DockPanel>
             <Separator Grid.Row="1" Margin="10,0,10,0" VerticalAlignment="Center"/>
-            <DockPanel Grid.Row="2">
-                <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
-                    <StackPanel Orientation="Horizontal">
-                        <Path Fill="Black" HorizontalAlignment="Right"
-                          Stretch="Uniform" Margin="5,2,5,2" Height="16"
-                          Data="F1 M 20,17L 43.25,17L 56,29.75L 56,40L 52,37.5L 52,34L 39,34L 39,21L 24,21L 24,55L 36,55L 32,59L 20,59L 20,17 Z M 43,22.25L 43,30L 50.75,30L 43,22.25 Z M 48,38C 53.5228,38 58,42.4772 58,48C 58,53.5229 53.5228,58 48,58C 46.1455,58 44.4089,57.4952 42.9201,56.6155L 36.1213,63.4142C 35.3403,64.1953 34.0739,64.1953 33.2929,63.4142L 32.5858,62.7071C 31.8047,61.9261 31.8047,60.6597 32.5858,59.8787L 39.3845,53.0799C 38.5048,51.5911 38,49.8545 38,48C 38,42.4772 42.4771,38 48,38 Z M 48,42C 44.6863,42 42,44.6863 42,48C 42,51.3137 44.6863,54 48,54C 51.3137,54 54,51.3137 54,48C 54,44.6863 51.3137,42 48,42 Z"/>
-                        <TextBlock Style="{StaticResource Header}" Text="SCAN PROCESS MANAGEMENT" Margin="5,3,5,3"/>
-                    </StackPanel>
-                </Border>
-
-                <StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Fill="ForestGreen" HorizontalAlignment="Right"
-                          Stretch="Uniform" Margin="5,2,5,2" Width="16"
-                          Data="F1 M 30.0833,22.1667L 50.6665,37.6043L 50.6665,38.7918L 30.0833,53.8333L 30.0833,22.1667 Z"/>
-                        <Button Content="Start scanning" HorizontalAlignment="Left" Margin="10,3,10,3" Width="250"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Fill="Orange" HorizontalAlignment="Right"
-                          Stretch="Uniform" Margin="5,2,5,2" Width="16"
-                          Data="F1 M 26.9167,23.75L 33.25,23.75L 33.25,52.25L 26.9167,52.25L 26.9167,23.75 Z M 42.75,23.75L 49.0833,23.75L 49.0833,52.25L 42.75,52.25L 42.75,23.75 Z"/>
-                        <Button Content="Pause scanning" HorizontalAlignment="Left" Margin="10,3,10,3" Width="250"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Path Fill="DarkRed" HorizontalAlignment="Right"
-                          Stretch="Uniform" Margin="5,2,5,2" Width="16"
-                          Data="F1 M 26.9166,22.1667L 37.9999,33.25L 49.0832,22.1668L 53.8332,26.9168L 42.7499,38L 53.8332,49.0834L 49.0833,53.8334L 37.9999,42.75L 26.9166,53.8334L 22.1666,49.0833L 33.25,38L 22.1667,26.9167L 26.9166,22.1667 Z"/>
-                        <Button Content="Cancel scanning" HorizontalAlignment="Left" Margin="10,3,10,3" Width="250"/>
-                    </StackPanel>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        
-                    </Grid>
-                </StackPanel>
-                
-
-            </DockPanel>
+            
         </Grid>
 
         <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center"
