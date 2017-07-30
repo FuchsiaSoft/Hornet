@@ -37,7 +37,7 @@ namespace GetDocText.Doc
 	/// <summary>
 	/// Summary description for BitUtils.
 	/// </summary>
-	public class BitUtils
+	internal class BitUtils
 	{
     // constructors ...
 		protected BitUtils()
@@ -50,7 +50,7 @@ namespace GetDocText.Doc
     /// </summary>
     /// <param name="target">The target to check bit from</param>
     /// <param name="bit">The bit to check</param>
-    public static bool IsSet(ushort target, byte bit)
+    internal static bool IsSet(ushort target, byte bit)
     {
       return (target & (0x1 << bit)) > 0;
     }

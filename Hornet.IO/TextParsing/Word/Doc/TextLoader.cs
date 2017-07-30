@@ -42,7 +42,7 @@ namespace GetDocText.Doc
     /// <summary>
     /// Implements loading of the text from the doc files.
     /// </summary>
-    public class TextLoader
+    internal class TextLoader
     {
         string _Path;
 
