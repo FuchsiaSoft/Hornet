@@ -40,6 +40,10 @@
       <HintPath>..\packages\DocumentFormat.OpenXml.2.7.2\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="DotNetZip, Version=1.10.1.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="MigraDoc.DocumentObjectModel, Version=1.50.4589.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\packages\PDFsharp-MigraDoc.1.50.4589-beta4\lib\net20\MigraDoc.DocumentObjectModel.dll</HintPath>
       <Private>True</Private>
@@ -68,6 +72,10 @@
       <HintPath>..\packages\Pri.LongPath.2.0.45\lib\net45\Pri.LongPath.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SimpleImpersonation, Version=2.0.1.27158, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleImpersonation.2.0.1\lib\net40-Client\SimpleImpersonation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -92,6 +100,7 @@
     <Compile Include="ScanResult.cs" />
     <Compile Include="ScanStatus.cs" />
     <Compile Include="TextParsing\ContentReaders\BinaryWordDocContentReader.cs" />
+    <Compile Include="TextParsing\ContentReaders\ZipContentReader.cs" />
     <Compile Include="TextParsing\FileReader.cs" />
     <Compile Include="TextParsing\IContentReader.cs" />
     <Compile Include="TextParsing\RegexInfo.cs" />
