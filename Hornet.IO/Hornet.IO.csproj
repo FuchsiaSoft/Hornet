@@ -106,6 +106,7 @@
     <Compile Include="ScanStatus.cs" />
     <Compile Include="TextParsing\ContentReaders\BinaryWordDocContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\ZipContentReader.cs" />
+    <Compile Include="TextParsing\EncodingType.cs" />
     <Compile Include="TextParsing\FileReader.cs" />
     <Compile Include="TextParsing\IContentReader.cs" />
     <Compile Include="TextParsing\RegexInfo.cs" />

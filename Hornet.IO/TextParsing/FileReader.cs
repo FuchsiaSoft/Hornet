@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Pri.LongPath;
 using FileInfo = Pri.LongPath.FileInfo;
+using File = Pri.LongPath.File;
 using Hornet.IO.TextParsing.ContentReaders;
+using System.IO;
 
 namespace Hornet.IO.TextParsing
 {
@@ -68,6 +69,54 @@ namespace Hornet.IO.TextParsing
             }
 
             return false;
+        }
+
+        public static string AttemptDecode(EncodingType type, string filePath)
+        {
+            string output;
+
+            try
+            {
+                using (Stream fileStream = File.OpenRead(filePath))
+                using (StreamReader reader = GetRightReader(type, fileStream))
+                {
+                    output = reader.ReadToEnd();
+                }
+            }
+            catch (Exception)
+            {
+                output = string.Empty;
+            }
+
+            return output;
+        }
+
+        private static StreamReader GetRightReader(EncodingType type, Stream fileStream)
+        {
+            switch (type)
+            {
+                case EncodingType.ASCII:
+                    return new StreamReader(fileStream, Encoding.ASCII);
+
+                case EncodingType.UTF7:
+                    return new StreamReader(fileStream, Encoding.UTF7);
+
+                case EncodingType.UTF8:
+                    return new StreamReader(fileStream, Encoding.UTF8);
+
+                case EncodingType.Unicode:
+                    return new StreamReader(fileStream, Encoding.Unicode);
+
+                case EncodingType.UnicodeBigEndian:
+                    return new StreamReader(fileStream, Encoding.BigEndianUnicode);
+
+                case EncodingType.UTF32:
+                    return new StreamReader(fileStream, Encoding.UTF32);
+
+                case EncodingType.AutoDetect:
+                default:
+                    return new StreamReader(fileStream, true);
+            }
         }
 
         private IContentReader ResolveReader(FileInfo _fileInfo)

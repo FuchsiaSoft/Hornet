@@ -9,10 +9,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using FileInfo = Pri.LongPath.FileInfo;
 using DirectoryInfo = Pri.LongPath.DirectoryInfo;
+using File = Pri.LongPath.File;
+using Path = Pri.LongPath.Path;
 using SimpleImpersonation;
 using System.Security;
-using Pri.LongPath;
 using MimeTypes;
+using Ionic.Zip;
+using System.IO;
 
 namespace Hornet.IO
 {
@@ -57,6 +60,17 @@ namespace Hornet.IO
         //this impersonation context
         private static Impersonation _impersonationContext;
 
+        //Hashset for checking whether to bother attempting the content
+        //of a file based on its extension
+        private static HashSet<string> _validExtensions = new HashSet<string>();
+
+        //various sets of file extensions
+        private static List<string> _pdfs = new List<string>()
+        {
+            ".pdf",
+            ".PDF"
+        };
+
         /// <summary>
         /// Gets the current status of the scan as a <see cref="ScanStatus"/>
         /// </summary>
@@ -66,6 +80,7 @@ namespace Hornet.IO
         /// Gets the results of the scan as a <see cref="ScanResult"/>
         /// </summary>
         public static ScanResult Results { get; private set; } = new ScanResult();
+
 
 
         /// <summary>
@@ -106,12 +121,19 @@ namespace Hornet.IO
                     AddNewScanEvent(ScanEventType.Finish, DateTime.Now);
                 }
 
+                EstablishExtensionsForContent();
+
                 StartDirectoryEnumerationThread();
 
                 StartFileEnumerationThread();
 
                 DoAssignment();
             });
+        }
+
+        private static void EstablishExtensionsForContent()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -176,7 +198,6 @@ namespace Hornet.IO
         {
             string filePath;
 
-
             bool holdBuffer = false;
             if (_options.HoldBufferForMultipleHashes)
             {
@@ -202,30 +223,135 @@ namespace Hornet.IO
                 {
                     HashReader hashReader = new HashReader(filePath, holdBuffer, sizeOverride);
 
-                    if (_includeMD5)
-                    {
-                        string md5 = hashReader.GetHash(HashType.MD5);
-                        if (_md5HashSet.Contains(md5)) AddResultToMatchedGroups(md5, HashType.MD5, filePath);
-                    }
-
-                    if (_includeSHA1)
-                    {
-                        string sha1 = hashReader.GetHash(HashType.SHA1);
-                        if (_sha1HashSet.Contains(sha1)) AddResultToMatchedGroups(sha1, HashType.SHA1, filePath);
-                    }
-
-                    if (_includeSHA256)
-                    {
-                        string sha256 = hashReader.GetHash(HashType.SHA256);
-                        if (_sha256HashSet.Contains(sha256)) AddResultToMatchedGroups(sha256, HashType.SHA256, filePath);
-                    }
+                    ProcessFileForHashes(filePath, hashReader);
 
                     //TODO: embedded files here
+                    if (_options.IncludeZip && ZipFile.IsZipFile(filePath))
+                    {
+                        ProcessZip(filePath);
+                    }
+
+                    FileReader contentReader = new FileReader(filePath);
+
+                    
                 }
             }
         }
 
-        private static void AddResultToMatchedGroups(string hash, HashType type, string filePath)
+        private static void ProcessZip(string filePath)
+        {
+            try
+            {
+                FileInfo fileInfo = new FileInfo(filePath);
+
+                using (ZipFile zip = ZipFile.Read(filePath))
+                {
+                    bool? useDisk = CheckWhetherToUseDisk(fileInfo);
+
+                    if (useDisk == null) return; //skip the zip file, not allowed to use disk but it's too big
+
+                    foreach (ZipEntry entry in zip.Entries)
+                    {
+                        if ((bool)useDisk)
+                        {
+                            string tempFile = Path.GetTempFileName();
+                            using (Stream stream = File.OpenWrite(tempFile))
+                            {
+                                ProcessEmbeddedFileStream(filePath, entry, stream);
+                            }
+                            File.Delete(tempFile);
+                        }
+                        else
+                        {
+                            using (Stream stream = new MemoryStream())
+                            {
+                                ProcessEmbeddedFileStream(filePath, entry, stream);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+
+        private static bool? CheckWhetherToUseDisk(FileInfo fileInfo)
+        {
+            if (_options.UnzipInMemory)
+            {
+                long zipSizeOverride = _options.MaxZipInMemorySize < 0 ? 0 : _options.MaxZipInMemorySize;
+                if (zipSizeOverride == 0 || fileInfo.Length < zipSizeOverride)
+                {
+                    return false;
+                }
+                else
+                {
+                    if (_options.UnzipToDiskIfTooBig)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private static void ProcessEmbeddedFileStream(string filePath, ZipEntry entry, Stream stream)
+        {
+            entry.Extract(stream);
+
+            if (_includeMD5)
+            {
+                string md5 = HashReader.GetHash(HashType.MD5, stream);
+                if (_md5HashSet.Contains(md5))
+                    AddResultToMatchedGroups(md5, HashType.MD5, filePath, true, entry.FileName, entry.UncompressedSize);
+            }
+
+            if (_includeSHA1)
+            {
+                string sha1 = HashReader.GetHash(HashType.SHA1, stream);
+                if (_md5HashSet.Contains(sha1))
+                    AddResultToMatchedGroups(sha1, HashType.SHA1, filePath, true, entry.FileName, entry.UncompressedSize);
+            }
+
+            if (_includeSHA256)
+            {
+                string sha256 = HashReader.GetHash(HashType.SHA256, stream);
+                if (_md5HashSet.Contains(sha256))
+                    AddResultToMatchedGroups(sha256, HashType.SHA256, filePath, true, entry.FileName, entry.UncompressedSize);
+            }
+        }
+
+        private static void ProcessFileForHashes(string filePath, HashReader hashReader)
+        {
+            if (_includeMD5)
+            {
+                string md5 = hashReader.GetHash(HashType.MD5);
+                if (_md5HashSet.Contains(md5)) AddResultToMatchedGroups(md5, HashType.MD5, filePath);
+            }
+
+            if (_includeSHA1)
+            {
+                string sha1 = hashReader.GetHash(HashType.SHA1);
+                if (_sha1HashSet.Contains(sha1)) AddResultToMatchedGroups(sha1, HashType.SHA1, filePath);
+            }
+
+            if (_includeSHA256)
+            {
+                string sha256 = hashReader.GetHash(HashType.SHA256);
+                if (_sha256HashSet.Contains(sha256)) AddResultToMatchedGroups(sha256, HashType.SHA256, filePath);
+            }
+        }
+
+        private static void AddResultToMatchedGroups(string hash, HashType type, string filePath, bool embedded = false, string embeddedName = "", long embeddedSize = 0)
         {
             try
             {
@@ -239,13 +365,23 @@ namespace Hornet.IO
                     foreach (HashInfo hashInfo in matchedHashInfos)
                     {
                         FileInfo fileInfo = new FileInfo(filePath);
-                        string mimeType = MimeTypeMap.GetMimeType(fileInfo.Extension ?? string.Empty);
+                        string mimeType;
+                        if (embedded)
+                        {
+                            mimeType = MimeTypeMap.GetMimeType(Path.GetExtension(embeddedName ?? string.Empty));
+                        }
+                        else
+                        {
+                            mimeType = MimeTypeMap.GetMimeType(fileInfo.Extension ?? string.Empty);
+                        }
 
                         HashResult result = new HashResult()
                         {
-                            EmbeddedFile = false,
-                            FilePath = filePath,
-                            Length = fileInfo.Length,
+                            EmbeddedFile = embedded,
+                            ParentPath = embedded ? filePath : string.Empty,
+                            FilePath = embedded ? embeddedName : filePath,
+                            ParentLength = embedded ? fileInfo.Length : 0,
+                            Length = embedded ? embeddedSize : fileInfo.Length,
                             MatchedHashInfo = hashInfo,
                             MimeType = mimeType
                         };

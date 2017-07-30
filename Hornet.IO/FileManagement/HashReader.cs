@@ -26,6 +26,55 @@ namespace Hornet.IO.FileManagement
             _sizeOverride = sizeOverride;
         }
 
+        /// <summary>
+        /// Static helper for when a stream is already posessed (e.g. in memory
+        /// files from an archive).  Does not utilise any internal buffers
+        /// </summary>
+        /// <param name="type">The <see cref="HashType"/> to use</param>
+        /// <param name="stream">The stream to hash</param>
+        /// <returns></returns>
+        public static string GetHash(HashType type, Stream stream)
+        {
+            string output;
+
+            try
+            {
+                switch (type)
+                {
+                    case HashType.MD5:
+                        using (MD5 md5 = MD5.Create())
+                        {
+                            output = HashToString(md5.ComputeHash(stream));
+                        }
+                        break;
+
+                    case HashType.SHA1:
+                        using (SHA1 sha1 = SHA1.Create())
+                        {
+                            output = HashToString(sha1.ComputeHash(stream));
+                        }
+                        break;
+
+                    case HashType.SHA256:
+                        using (SHA256 sha256 = SHA256.Create())
+                        {
+                            output = HashToString(sha256.ComputeHash(stream));
+                        }
+                        break;
+
+                    default:
+                        output = string.Empty;
+                        break;
+                }
+            }
+            catch (Exception)
+            {
+                output = string.Empty;
+            }
+
+            return output;
+        }
+
         public string GetHash(HashType type)
         {
             string hashString;
@@ -142,7 +191,7 @@ namespace Hornet.IO.FileManagement
             return output;
         }
 
-        private string HashToString(byte[] hash)
+        private static string HashToString(byte[] hash)
         {
             StringBuilder sb = new StringBuilder();
             foreach (var hashByte in hash)

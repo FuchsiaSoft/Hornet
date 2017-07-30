@@ -32,11 +32,17 @@ namespace Hornet.IO.FileManagement
         /// <summary>
         /// The length of the matched file
         /// </summary>
-        public long Length { get; set; }
+        public long Length { get; internal set; }
 
         /// <summary>
         /// The <see cref="HashInfo"/> that was matched
         /// </summary>
-        public HashInfo MatchedHashInfo { get; set; }
+        public HashInfo MatchedHashInfo { get; internal set; }
+
+        /// <summary>
+        /// Gets a <see cref="long"/> representing the length of the
+        /// parent file if the subject file was embedded
+        /// </summary>
+        public long ParentLength { get; internal set; }
     }
 }

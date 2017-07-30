@@ -64,6 +64,34 @@ namespace Hornet.IO
         public long MaxBufferSize { get; set; } = 0;
 
         /// <summary>
+        /// Gets or sets a <see cref="bool"/> indicating whether or not to attempt
+        /// unpacking archive files and hashing their internals.  Default false
+        /// </summary>
+        public bool IncludeZip { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> indicating whether or not to un-pack
+        /// archive files in-memory without touching local disk if <see cref="IncludeZip"/>
+        /// is true.  Default true
+        /// </summary>
+        public bool UnzipInMemory { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets a <see cref="long"/> representing the maximum file size
+        /// to attempt in-memory unpacking of archives if <see cref="UnzipInMemory"/>
+        /// is set to true.  Zero is treated as unlimited, default 0
+        /// </summary>
+        public long MaxZipInMemorySize { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> indicating whether or not to unzip 
+        /// archive files to local disk if <see cref="IncludeZip"/> is true,
+        /// <see cref="UnzipInMemory"/> is true and <see cref="MaxZipInMemorySize"/>
+        /// is set to 0.  Default false
+        /// </summary>
+        public bool UnzipToDiskIfTooBig { get; set; } = false;
+
+        /// <summary>
         /// The list of <see cref="HashInfoGroup"/> objects to match against
         /// </summary>
         public IList<HashInfoGroup> HashGroups { get; set; } = new List<HashInfoGroup>();
