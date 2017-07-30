@@ -4,11 +4,155 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="HornetModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
-        <EntityContainer Name="HornetModelTargetContainer" >
-        </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+    <Schema Namespace="HornetModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2012" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityContainer Name="HornetModelStoreContainer">
+    <EntitySet Name="HashGroups" EntityType="HornetModel.Store.HashGroups" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="HashEntries" EntityType="HornetModel.Store.HashEntries" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="RegexGroups" EntityType="HornetModel.Store.RegexGroups" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="RegexEntries" EntityType="HornetModel.Store.RegexEntries" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="HashEntries_MD5" EntityType="HornetModel.Store.HashEntries_MD5" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="HashEntries_SHA1" EntityType="HornetModel.Store.HashEntries_SHA1" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="HashEntries_SHA256" EntityType="HornetModel.Store.HashEntries_SHA256" store:Type="Tables" Schema="dbo" />
+    <AssociationSet Name="HashGroupHashEntry" Association="HornetModel.Store.HashGroupHashEntry">
+      <End Role="HashGroup" EntitySet="HashGroups" />
+      <End Role="HashEntry" EntitySet="HashEntries" />
+    </AssociationSet>
+    <AssociationSet Name="RegexGroupRegexEntry" Association="HornetModel.Store.RegexGroupRegexEntry">
+      <End Role="RegexGroup" EntitySet="RegexGroups" />
+      <End Role="RegexEntry" EntitySet="RegexEntries" />
+    </AssociationSet>
+    <AssociationSet Name="FK_MD5_inherits_HashEntry" Association="HornetModel.Store.FK_MD5_inherits_HashEntry">
+      <End Role="HashEntry" EntitySet="HashEntries" />
+      <End Role="MD5" EntitySet="HashEntries_MD5" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SHA1_inherits_HashEntry" Association="HornetModel.Store.FK_SHA1_inherits_HashEntry">
+      <End Role="HashEntry" EntitySet="HashEntries" />
+      <End Role="SHA1" EntitySet="HashEntries_SHA1" />
+    </AssociationSet>
+    <AssociationSet Name="FK_SHA256_inherits_HashEntry" Association="HornetModel.Store.FK_SHA256_inherits_HashEntry">
+      <End Role="HashEntry" EntitySet="HashEntries" />
+      <End Role="SHA256" EntitySet="HashEntries_SHA256" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="HashGroups">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
+  </EntityType>
+  <EntityType Name="HashEntries">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="HashValue" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Remarks" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="HashGroupId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="RegexGroups">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Description" Type="nvarchar(max)" Nullable="true" />
+  </EntityType>
+  <EntityType Name="RegexEntries">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Pattern" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Remarks" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="RegexGroupId" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="HashEntries_MD5">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="HashEntries_SHA1">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="HashEntries_SHA256">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+  </EntityType>
+  <Association Name="HashGroupHashEntry">
+    <End Role="HashGroup" Type="HornetModel.Store.HashGroups" Multiplicity="1" />
+    <End Role="HashEntry" Type="HornetModel.Store.HashEntries" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="HashGroup">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="HashEntry">
+        <PropertyRef Name="HashGroupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="RegexGroupRegexEntry">
+    <End Role="RegexGroup" Type="HornetModel.Store.RegexGroups" Multiplicity="1" />
+    <End Role="RegexEntry" Type="HornetModel.Store.RegexEntries" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="RegexGroup">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="RegexEntry">
+        <PropertyRef Name="RegexGroupId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_MD5_inherits_HashEntry">
+    <End Role="HashEntry" Type="HornetModel.Store.HashEntries" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="MD5" Type="HornetModel.Store.HashEntries_MD5" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="HashEntry">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="MD5">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SHA1_inherits_HashEntry">
+    <End Role="HashEntry" Type="HornetModel.Store.HashEntries" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="SHA1" Type="HornetModel.Store.HashEntries_SHA1" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="HashEntry">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SHA1">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_SHA256_inherits_HashEntry">
+    <End Role="HashEntry" Type="HornetModel.Store.HashEntries" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="SHA256" Type="HornetModel.Store.HashEntries_SHA256" Multiplicity="0..1" />
+    <ReferentialConstraint>
+      <Principal Role="HashEntry">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="SHA256">
+        <PropertyRef Name="Id" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="HornetModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
@@ -96,13 +240,63 @@
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
-      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
-        <Alias Key="Model" Value="HornetModel" />
-        <Alias Key="Target" Value="HornetModel.Store" />
-        <EntityContainerMapping CdmEntityContainer="HornetModelContainer" StorageEntityContainer="HornetModelTargetContainer">
-        </EntityContainerMapping>
-      </Mapping>
-    </edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="HornetModelStoreContainer" CdmEntityContainer="HornetModelContainer">
+    <EntitySetMapping Name="HashGroups">
+      <EntityTypeMapping TypeName="IsTypeOf(HornetModel.HashGroup)">
+        <MappingFragment StoreEntitySet="HashGroups">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="HashEntries">
+      <EntityTypeMapping TypeName="IsTypeOf(HornetModel.HashEntry)">
+        <MappingFragment StoreEntitySet="HashEntries">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="HashValue" ColumnName="HashValue" />
+          <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+          <ScalarProperty Name="HashGroupId" ColumnName="HashGroupId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(HornetModel.MD5)">
+        <MappingFragment StoreEntitySet="HashEntries_MD5">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(HornetModel.SHA1)">
+        <MappingFragment StoreEntitySet="HashEntries_SHA1">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+      <EntityTypeMapping TypeName="IsTypeOf(HornetModel.SHA256)">
+        <MappingFragment StoreEntitySet="HashEntries_SHA256">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="RegexGroups">
+      <EntityTypeMapping TypeName="IsTypeOf(HornetModel.RegexGroup)">
+        <MappingFragment StoreEntitySet="RegexGroups">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="RegexEntries">
+      <EntityTypeMapping TypeName="IsTypeOf(HornetModel.RegexEntry)">
+        <MappingFragment StoreEntitySet="RegexEntries">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="Pattern" ColumnName="Pattern" />
+          <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+          <ScalarProperty Name="RegexGroupId" ColumnName="RegexGroupId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
   </edmx:Runtime>
   <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
@@ -116,6 +310,7 @@
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
         <DesignerProperty Name="EnablePluralization" Value="True" />
         <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
       </DesignerInfoPropertySet>
     </edmx:Options>
     <!-- Diagram content (shape and connector positions) -->
