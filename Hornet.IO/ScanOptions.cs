@@ -91,6 +91,9 @@ namespace Hornet.IO
         /// </summary>
         public bool UnzipToDiskIfTooBig { get; set; } = false;
 
+
+        public EncodingType EncodingType { get; set; }
+
         /// <summary>
         /// The list of <see cref="HashInfoGroup"/> objects to match against
         /// </summary>

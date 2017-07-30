@@ -10,8 +10,6 @@
         ResizeMode="NoResize">
     <Window.Resources>
 
-        <conv:InverseBooleanConverter x:Key="BoolInverter"/>
-
         <Style TargetType="TextBlock" x:Key="Header">
             <Setter Property="FontWeight" Value="ExtraBold"/>
             <Setter Property="Foreground" Value="Black"/>
@@ -44,6 +42,27 @@
         <Style TargetType="CheckBox">
             <Setter Property="FontSize" Value="10"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="RadioButton">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Label">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkGray"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </Window.Resources>
     
@@ -291,6 +310,12 @@
                                 <CheckBox Content="Include JPEGs embedded inside PDFs" IsEnabled="{Binding ElementName=chkEmbedded, Path=IsChecked}"/>
                                 <CheckBox Content="Include all files embedded inside Open XML docs (docx etc.)" IsEnabled="{Binding ElementName=chkEmbedded, Path=IsChecked}"/>
                                 <CheckBox Content="Include files inside ZIPs where possible" IsEnabled="{Binding ElementName=chkEmbedded, Path=IsChecked}"/>
+                                <CheckBox IsEnabled="{Binding ElementName=chkEmbedded, Path=IsChecked}">
+                                    <TextBlock>
+                                        <Run>Include attachments inside MSG (Outlook) files</Run>
+                                        <Run Foreground="Red" FontWeight="Bold" FontSize="7">(WILL USE LOCAL DISK %TEMP%)</Run>
+                                    </TextBlock>
+                                </CheckBox>
                             </StackPanel>
                         </Grid>
                         
@@ -417,18 +442,19 @@
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel Orientation="Vertical" Grid.Column="0">
-                                        <CheckBox Content="ASCII" />
-                                        <CheckBox Content="UTF16 (Unicode)" />
+                                        <RadioButton GroupName="Encoding" Content="ASCII" />
+                                        <RadioButton GroupName="Encoding" Content="UTF16 (Unicode)" />
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Grid.Column="1">
-                                        <CheckBox Content="UTF7" />
-                                        <CheckBox Content="UTF16 (Unicode BE)" />
+                                        <RadioButton GroupName="Encoding" Content="UTF7" />
+                                        <RadioButton GroupName="Encoding" Content="UTF16 (Unicode BE)" />
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Grid.Column="2">
-                                        <CheckBox Content="UTF8" />
-                                        <CheckBox Content="UTF32" />
+                                        <RadioButton GroupName="Encoding" Content="UTF8" />
+                                        <RadioButton GroupName="Encoding" Content="UTF32" />
                                     </StackPanel>
                                 </Grid>
+                                <RadioButton GroupName="Encoding" Content="Auto-detect" IsEnabled="{Binding ElementName=chkAlwaysText, Path=IsChecked}"/>
                                 <Grid IsEnabled="{Binding ElementName=chkAlwaysText, Path=IsChecked}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="220"/>

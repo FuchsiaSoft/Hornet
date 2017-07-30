@@ -133,7 +133,11 @@ namespace Hornet.IO
 
         private static void EstablishExtensionsForContent()
         {
-            throw new NotImplementedException();
+            //TODO: check options properly
+            foreach (string extension in _pdfs)
+            {
+                _validExtensions.Add(extension);
+            }
         }
 
         /// <summary>
