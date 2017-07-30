@@ -1,4 +1,5 @@
 ﻿using Hornet.IO.FileManagement;
+using Hornet.IO.TextParsing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,18 +16,13 @@ namespace Hornet.IO
     public class ScanOptions
     {
         /// <summary>
-        /// Gets or sets a list of MD5 hashes to scan for
+        /// The list of <see cref="HashInfoGroup"/> objects to match against
         /// </summary>
-        public IList<HashInfo> MD5s { get; set; } = new List<HashInfo>();
+        public IList<HashInfoGroup> HashGroups { get; set; } = new List<HashInfoGroup>();
 
         /// <summary>
-        /// Gets or sets a list of SHA1 hashes to scan for
+        /// The list of <see cref="RegexInfoGroup"/> objects to match against
         /// </summary>
-        public IList<HashInfo> SHA1s { get; set; } = new List<HashInfo>();
-
-        /// <summary>
-        /// Gets or sets a list of SHA256 hashes to scan for
-        /// </summary>
-        public IList<HashInfo> SHA256s { get; set; } = new List<HashInfo>();
+        public IList<RegexInfoGroup> RegexGroups { get; set; } = new List<RegexInfoGroup>();
     }
 }

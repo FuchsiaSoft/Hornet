@@ -80,14 +80,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileManagement\HashInfo.cs" />
+    <Compile Include="FileManagement\HashInfoGroup.cs" />
+    <Compile Include="FileManagement\HashResult.cs" />
     <Compile Include="FileManagement\HashType.cs" />
     <Compile Include="HornetScanManager.cs" />
+    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScanEvent.cs" />
     <Compile Include="ScanEventType.cs" />
     <Compile Include="ScanOptions.cs" />
+    <Compile Include="ScanResult.cs" />
     <Compile Include="ScanStatus.cs" />
+    <Compile Include="TextParsing\ContentReaders\BinaryWordDocContentReader.cs" />
     <Compile Include="TextParsing\FileReader.cs" />
+    <Compile Include="TextParsing\IContentReader.cs" />
+    <Compile Include="TextParsing\RegexInfo.cs" />
+    <Compile Include="TextParsing\RegexInfoGroup.cs" />
+    <Compile Include="TextParsing\RegexResult.cs" />
     <Compile Include="TextParsing\Word\Doc\BitUtils.cs" />
     <Compile Include="TextParsing\Word\Doc\FileOffset.cs" />
     <Compile Include="TextParsing\Word\Doc\FileOffsetCollection.cs" />

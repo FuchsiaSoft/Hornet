@@ -23,10 +23,14 @@ namespace Hornet.IO
         private static bool _includeSHA1 = false;
         private static bool _includeSHA256 = false;
 
+        private static ScanOptions _options;
+
         /// <summary>
         /// Gets the current status of the scan as a <see cref="ScanStatus"/>
         /// </summary>
         public static ScanStatus Status { get; private set; } = new ScanStatus();
+
+        public static ScanResult Results { get; private set; } = new ScanResult();
 
         /// <summary>
         /// Starts a scan running with the options provided.
@@ -34,9 +38,16 @@ namespace Hornet.IO
         /// <param name="options">The options to run the scan with</param>
         public static void StartScan(ScanOptions options)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException("Options must be specified starting a scan");
+            }
+
+            _options = options;
+
             AddNewScanEvent(ScanEventType.Start, DateTime.Now);
 
-            AddHashesToInternalSets(options);
+            AddHashesToInternalSets();
 
 
         }
@@ -50,9 +61,32 @@ namespace Hornet.IO
             });
         }
 
-        private static void AddHashesToInternalSets(ScanOptions options)
+        private static void AddHashesToInternalSets()
         {
-            if (options.MD5s != null)
+            if (_options.HashGroups != null)
+            {
+                foreach (HashInfoGroup hashGroup in _options.HashGroups)
+                {
+                    if (hashGroup.MD5s != null && hashGroup.MD5s.Count > 0)
+                    {
+                        _includeMD5 = true;
+                        foreach (HashInfo thisInfo in hashGroup.MD5s)
+                        {
+                            _md5HashSet.Add(thisInfo.Hash);
+                        }
+                    }
+
+                    if (hashGroup.SHA1s != null && hashGroup.SHA1s.Count > 0)
+                    {
+                        _includeSHA1 = true;
+                        foreach (HashInfo thisInfo in hashGroup.SHA1s)
+                        {
+                            _sha1HashSet.Add(thisInfo.Hash);
+                        }
+                    }
+                }
+            }
+            if (options != null)
             {
                 _includeMD5 = true;
                 foreach (HashInfo info in options.MD5s)
