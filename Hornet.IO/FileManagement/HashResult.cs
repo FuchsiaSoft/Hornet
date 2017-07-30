@@ -32,7 +32,7 @@ namespace Hornet.IO.FileManagement
         /// <summary>
         /// The length of the matched file
         /// </summary>
-        public string Length { get; set; }
+        public long Length { get; set; }
 
         /// <summary>
         /// The <see cref="HashInfo"/> that was matched

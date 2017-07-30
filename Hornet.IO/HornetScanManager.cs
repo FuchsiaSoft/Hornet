@@ -12,6 +12,7 @@ using DirectoryInfo = Pri.LongPath.DirectoryInfo;
 using SimpleImpersonation;
 using System.Security;
 using Pri.LongPath;
+using MimeTypes;
 
 namespace Hornet.IO
 {
@@ -33,15 +34,19 @@ namespace Hornet.IO
 
         private static ScanOptions _options;
 
+        //Some of the options are copied to here on start scan just
+        //for the sake of concise syntax
+        private static int _dirQueueLimit;
+        private static int _fileQueueLimit;
+
         //Working queues used to avoid enormous amounts of recursion on SAN
         //scale file systems
         private static ConcurrentQueue<string> _directoryEnumerationQueue = new ConcurrentQueue<string>();
-        private static ConcurrentQueue<string> _directoryWorkingQueue = new ConcurrentQueue<string>();
         private static ConcurrentQueue<string> _fileWorkingQueue = new ConcurrentQueue<string>();
 
         private static Thread _directoryEnumerationThread;
         private static Thread _fileEnumerationThread;
-        private static Thread _assignerThread;
+        private static List<Thread> _workerThreads = new List<Thread>();
 
         //Flags for maintaining state with all the different threads.
         private static bool _directoryEnumerationFinished = false;
@@ -75,6 +80,8 @@ namespace Hornet.IO
             }
 
             _options = options;
+            _dirQueueLimit = _options.MaxDirectoryQueueSize;
+            _fileQueueLimit = _options.MaxFileQueueSize;
 
             AddNewScanEvent(ScanEventType.Start, DateTime.Now);
 
@@ -103,7 +110,7 @@ namespace Hornet.IO
 
                 StartFileEnumerationThread();
 
-                StartAssignerThread();
+                DoAssignment();
             });
         }
 
@@ -153,9 +160,105 @@ namespace Hornet.IO
             _impersonationContext?.Dispose();
         }
 
-        private static void StartAssignerThread()
+        private static void DoAssignment()
         {
-            throw new NotImplementedException();
+            int threadCount = _options.MaxWorkerThreads < 1 ? 1 : _options.MaxWorkerThreads;
+
+            for (int i = 0; i < threadCount; i++)
+            {
+                Thread thread = new Thread(DoWork);
+                _workerThreads.Add(thread);
+                thread.Start();
+            }
+        }
+
+        private static void DoWork()
+        {
+            string filePath;
+
+
+            bool holdBuffer = false;
+            if (_options.HoldBufferForMultipleHashes)
+            {
+                int hashAlgoCount = 0;
+
+                if (_includeMD5) hashAlgoCount++;
+                if (_includeSHA1) hashAlgoCount++;
+                if (_includeSHA256) hashAlgoCount++;
+
+                if (hashAlgoCount > 1) holdBuffer = true;
+            }
+
+            long sizeOverride = _options.MaxBufferSize < 0 ? 0 : _options.MaxBufferSize;
+
+            while (_fileEnumerationFinished == false || _fileWorkingQueue.Count > 0)
+            {
+                if (_fileWorkingQueue.Count == 0)
+                {
+                    Thread.Sleep(1000);
+                }
+
+                while (_fileWorkingQueue.TryDequeue(out filePath))
+                {
+                    HashReader hashReader = new HashReader(filePath, holdBuffer, sizeOverride);
+
+                    if (_includeMD5)
+                    {
+                        string md5 = hashReader.GetHash(HashType.MD5);
+                        if (_md5HashSet.Contains(md5)) AddResultToMatchedGroups(md5, HashType.MD5, filePath);
+                    }
+
+                    if (_includeSHA1)
+                    {
+                        string sha1 = hashReader.GetHash(HashType.SHA1);
+                        if (_sha1HashSet.Contains(sha1)) AddResultToMatchedGroups(sha1, HashType.SHA1, filePath);
+                    }
+
+                    if (_includeSHA256)
+                    {
+                        string sha256 = hashReader.GetHash(HashType.SHA256);
+                        if (_sha256HashSet.Contains(sha256)) AddResultToMatchedGroups(sha256, HashType.SHA256, filePath);
+                    }
+
+                    //TODO: embedded files here
+                }
+            }
+        }
+
+        private static void AddResultToMatchedGroups(string hash, HashType type, string filePath)
+        {
+            try
+            {
+                foreach (HashInfoGroup hashGroup in Results.HashGroups)
+                {
+                    List<HashInfo> matchedHashInfos = new List<HashInfo>();
+                    if (type == HashType.MD5) matchedHashInfos.AddRange(hashGroup.MD5s.Where(h => h.Hash == hash));
+                    if (type == HashType.SHA1) matchedHashInfos.AddRange(hashGroup.SHA1s.Where(h => h.Hash == hash));
+                    if (type == HashType.SHA256) matchedHashInfos.AddRange(hashGroup.SHA256s.Where(h => h.Hash == hash));
+
+                    foreach (HashInfo hashInfo in matchedHashInfos)
+                    {
+                        FileInfo fileInfo = new FileInfo(filePath);
+                        string mimeType = MimeTypeMap.GetMimeType(fileInfo.Extension ?? string.Empty);
+
+                        HashResult result = new HashResult()
+                        {
+                            EmbeddedFile = false,
+                            FilePath = filePath,
+                            Length = fileInfo.Length,
+                            MatchedHashInfo = hashInfo,
+                            MimeType = mimeType
+                        };
+
+                        hashGroup.Matches.Add(result);
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                //TODO: implement proper logging here
+                return;
+            }
         }
 
         private static void StartDirectoryEnumerationThread()
@@ -168,41 +271,7 @@ namespace Hornet.IO
         {
             DirectoryInfo rootDir = new DirectoryInfo(_options.RootDirectoryPath);
 
-
-
-            string dirPath;
-            int queueLimit = _options.MaxDirectoryQueueSize;
-
-            while (_directoryEnumerationQueue.TryDequeue(out dirPath))
-            {
-                DirectoryInfo dir = new DirectoryInfo(dirPath);
-
-                RecurseDirectory(dir);
-
-                try
-                {
-                    IEnumerable<DirectoryInfo> subDirs = dir.EnumerateDirectories();
-
-                    foreach (DirectoryInfo subDir in subDirs)
-                    {
-                        while (queueLimit > 0 && _directoryWorkingQueue.Count >= queueLimit)
-                        {
-                            Thread.Sleep(1000);
-                        }
-
-                        _directoryEnumerationQueue.Enqueue(subDir.FullName);
-                        _directoryWorkingQueue.Enqueue(subDir.FullName);
-
-                        Interlocked.Increment(ref Status.TotalDirectoryCount);
-                    }
-                }
-                catch (Exception)
-                {
-                    continue;
-                }
-            }
-
-            _directoryEnumerationFinished = true;
+            RecurseDirectory(rootDir);
 
             lock (Status)
             {
@@ -212,7 +281,24 @@ namespace Hornet.IO
 
         private static void RecurseDirectory(DirectoryInfo dir)
         {
-            throw new NotImplementedException();
+            try
+            {
+                foreach (DirectoryInfo subDir in dir.EnumerateDirectories())
+                {
+                    RecurseDirectory(subDir);
+                    while (_dirQueueLimit > 0 && _directoryEnumerationQueue.Count > _dirQueueLimit)
+                    {
+                        Thread.Sleep(1000);
+                    }
+
+                    _directoryEnumerationQueue.Enqueue(subDir.FullName);
+                    Interlocked.Increment(ref Status.TotalDirectoryCount);
+                }
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
 
         private static void StartFileEnumerationThread()
@@ -224,29 +310,38 @@ namespace Hornet.IO
         private static void DoFileEnumeration()
         {
             string dirPath;
-            int queueLimit = _options.MaxFileQueueSize;
 
-            while (_directoryWorkingQueue.TryDequeue(out dirPath))
+            while (!_directoryEnumerationFinished)
             {
-                DirectoryInfo dir = new DirectoryInfo(dirPath);
-                try
+                if (_directoryEnumerationQueue.Count == 0)
                 {
-                    IEnumerable<FileInfo> files = dir.EnumerateFiles();
-
-                    foreach (FileInfo file in files)
-                    {
-                        while (queueLimit > 0 && _fileWorkingQueue.Count >= queueLimit)
-                        {
-                            Thread.Sleep(1000);
-                        }
-
-                        _fileWorkingQueue.Enqueue(file.FullName);
-                        Interlocked.Increment(ref Status.TotalFileCount);
-                    }
+                    //Right at the beginning there won't be anything in this
+                    //queue for a while so chillax
+                    Thread.Sleep(5000);
                 }
-                catch (Exception)
+
+                while (_directoryEnumerationQueue.TryPeek(out dirPath))
                 {
-                    continue;
+                    try
+                    {
+                        DirectoryInfo dir = new DirectoryInfo(dirPath);
+                        IEnumerable<FileInfo> files = dir.EnumerateFiles();
+                        foreach (FileInfo file in files)
+                        {
+                            //if we have directories in queue but no room for them, just chillax here too
+                            while (_fileQueueLimit > 0 && _fileWorkingQueue.Count >= _fileQueueLimit)
+                            {
+                                Thread.Sleep(5000);
+                            }
+
+                            _fileWorkingQueue.Enqueue(file.FullName);
+                            Interlocked.Increment(ref Status.TotalFileCount);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
                 }
             }
 

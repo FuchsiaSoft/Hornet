@@ -33,6 +33,12 @@ namespace Hornet.IO
         public int MaxDirectoryQueueSize { get; set; } = 0;
 
         /// <summary>
+        /// Gets or sets the maximum number of worker threads to use,
+        /// any number less than 1 is treated as 1
+        /// </summary>
+        public int MaxWorkerThreads { get; set; } = 1;
+
+        /// <summary>
         /// Gets or sets the maximum file queue size, zero or any
         /// non positive int is counted as unlimited
         /// </summary>
@@ -42,6 +48,20 @@ namespace Hornet.IO
         /// The timeout in seconds to apply to regex's
         /// </summary>
         public int RegexTimeoutSeconds { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> indicating whether or not
+        /// to hold the buffer in memory for files when running multiple
+        /// hashes
+        /// </summary>
+        public bool HoldBufferForMultipleHashes { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets a <see cref="long"/> representing the maximum length
+        /// of a file to hold in an in-memory buffer if <see cref="HoldBufferForMultipleHashes"/>
+        /// is set to true.  Zero is treated as unlimited.
+        /// </summary>
+        public long MaxBufferSize { get; set; } = 0;
 
         /// <summary>
         /// The list of <see cref="HashInfoGroup"/> objects to match against
