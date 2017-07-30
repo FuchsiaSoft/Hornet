@@ -32,8 +32,45 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DCSoft.RTF, Version=1.0.0.34176, Culture=neutral, PublicKeyToken=2e40e961ea876340, processorArchitecture=MSIL">
+      <HintPath>..\packages\RtfDomParser.1.0.0\lib\DCSoft.RTF.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="DocumentFormat.OpenXml, Version=2.7.2.0, Culture=neutral, PublicKeyToken=8fb06cb64d019a17, processorArchitecture=MSIL">
+      <HintPath>..\packages\DocumentFormat.OpenXml.2.7.2\lib\net40\DocumentFormat.OpenXml.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MigraDoc.DocumentObjectModel, Version=1.50.4589.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc.1.50.4589-beta4\lib\net20\MigraDoc.DocumentObjectModel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MigraDoc.Rendering, Version=1.50.4589.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc.1.50.4589-beta4\lib\net20\MigraDoc.Rendering.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MigraDoc.RtfRendering, Version=1.50.4589.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc.1.50.4589-beta4\lib\net20\MigraDoc.RtfRendering.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MsgReader, Version=2.0.13.0, Culture=neutral, PublicKeyToken=47f99f3a9a2648df, processorArchitecture=MSIL">
+      <HintPath>..\packages\MSGReader.2.0.13\lib\MsgReader.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PdfSharp, Version=1.50.4589.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc.1.50.4589-beta4\lib\net20\PdfSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PdfSharp.Charting, Version=1.50.4589.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\PDFsharp-MigraDoc.1.50.4589-beta4\lib\net20\PdfSharp.Charting.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Pri.LongPath, Version=2.0.45.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Pri.LongPath.2.0.45\lib\net45\Pri.LongPath.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -50,6 +87,28 @@
     <Compile Include="ScanEventType.cs" />
     <Compile Include="ScanOptions.cs" />
     <Compile Include="ScanStatus.cs" />
+    <Compile Include="TextParsing\FileReader.cs" />
+    <Compile Include="TextParsing\Word\Doc\BitUtils.cs" />
+    <Compile Include="TextParsing\Word\Doc\FileOffset.cs" />
+    <Compile Include="TextParsing\Word\Doc\FileOffsetCollection.cs" />
+    <Compile Include="TextParsing\Word\Doc\PieceDescriptor.cs" />
+    <Compile Include="TextParsing\Word\Doc\PieceDescriptorCollection.cs" />
+    <Compile Include="TextParsing\Word\Doc\TextLoader.cs" />
+    <Compile Include="TextParsing\Word\Native\Enums.cs" />
+    <Compile Include="TextParsing\Word\Native\Guids.cs" />
+    <Compile Include="TextParsing\Word\Native\IEnumSTATSTG.cs" />
+    <Compile Include="TextParsing\Word\Native\IStorage.cs" />
+    <Compile Include="TextParsing\Word\Native\NativeMethods.cs" />
+    <Compile Include="TextParsing\Word\Native\Structs.cs" />
+    <Compile Include="TextParsing\Word\Ole\OleStorage.cs" />
+    <Compile Include="TextParsing\Word\Ole\OleStream.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="TextParsing\Word\README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

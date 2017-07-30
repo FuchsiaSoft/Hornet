@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Hornet.ViewModel
+namespace Hornet.IO.TextParsing
 {
-    public class Class1
+    public class FileReader
     {
-        
 
     }
 }
