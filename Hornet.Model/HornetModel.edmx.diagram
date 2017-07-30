@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="cab0accf4dcc48bc82b6b587a4710b9b" Name="Diagram1" >
+        <EntityTypeShape EntityType="HornetModel.HashGroup" Width="1.5" PointX="0.75" PointY="0.5" />
+        <EntityTypeShape EntityType="HornetModel.HashEntry" Width="1.5" PointX="2.75" PointY="0.5" />
+        <AssociationConnector Association="HornetModel.HashGroupHashEntry" />
+        <EntityTypeShape EntityType="HornetModel.MD5" Width="1.5" PointX="4.5" PointY="0.5" />
+        <InheritanceConnector EntityType="HornetModel.MD5" />
+        <EntityTypeShape EntityType="HornetModel.SHA1" Width="1.5" PointX="4.5" PointY="1.75" />
+        <EntityTypeShape EntityType="HornetModel.SHA256" Width="1.5" PointX="4.5" PointY="3" />
+        <InheritanceConnector EntityType="HornetModel.SHA1" />
+        <InheritanceConnector EntityType="HornetModel.SHA256" />
+        <EntityTypeShape EntityType="HornetModel.RegexGroup" Width="1.5" PointX="0.75" PointY="3" />
+        <EntityTypeShape EntityType="HornetModel.RegexEntry" Width="1.5" PointX="2.75" PointY="3.625" />
+        <AssociationConnector Association="HornetModel.RegexGroupRegexEntry" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

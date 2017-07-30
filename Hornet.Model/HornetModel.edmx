@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl" Namespace="HornetModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2005">
+        <EntityContainer Name="HornetModelTargetContainer" >
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" xmlns:cg="http://schemas.microsoft.com/ado/2006/04/codegeneration" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" Namespace="HornetModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" annotation:UseStrongSpatialTypes="false">
+        <EntityContainer Name="HornetModelContainer" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="HashGroups" EntityType="HornetModel.HashGroup" />
+          <EntitySet Name="HashEntries" EntityType="HornetModel.HashEntry" />
+          <AssociationSet Name="HashGroupHashEntry" Association="HornetModel.HashGroupHashEntry">
+            <End Role="HashGroup" EntitySet="HashGroups" />
+            <End Role="HashEntry" EntitySet="HashEntries" />
+          </AssociationSet>
+          <EntitySet Name="RegexGroups" EntityType="HornetModel.RegexGroup" />
+          <EntitySet Name="RegexEntries" EntityType="HornetModel.RegexEntry" />
+          <AssociationSet Name="RegexGroupRegexEntry" Association="HornetModel.RegexGroupRegexEntry">
+            <End Role="RegexGroup" EntitySet="RegexGroups" />
+            <End Role="RegexEntry" EntitySet="RegexEntries" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="HashGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="true" />
+          <NavigationProperty Name="HashEntries" Relationship="HornetModel.HashGroupHashEntry" FromRole="HashGroup" ToRole="HashEntry" />
+        </EntityType>
+        <EntityType Name="HashEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="HashValue" Type="String" Nullable="false" />
+          <Property Name="Remarks" Type="String" Nullable="true" />
+          <NavigationProperty Name="HashGroup" Relationship="HornetModel.HashGroupHashEntry" FromRole="HashEntry" ToRole="HashGroup" />
+          <Property Name="HashGroupId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="HashGroupHashEntry">
+          <End Type="HornetModel.HashGroup" Role="HashGroup" Multiplicity="1" />
+          <End Type="HornetModel.HashEntry" Role="HashEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HashGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="HashEntry">
+              <PropertyRef Name="HashGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="MD5" BaseType="HornetModel.HashEntry">
+          </EntityType>
+        <EntityType Name="SHA1" BaseType="HornetModel.HashEntry" />
+        <EntityType Name="SHA256" BaseType="HornetModel.HashEntry" />
+        <EntityType Name="RegexGroup">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" />
+          <Property Name="Description" Type="String" Nullable="true" />
+          <NavigationProperty Name="RegexEntries" Relationship="HornetModel.RegexGroupRegexEntry" FromRole="RegexGroup" ToRole="RegexEntry" />
+        </EntityType>
+        <EntityType Name="RegexEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Pattern" Type="String" Nullable="false" />
+          <Property Name="Remarks" Type="String" Nullable="false" />
+          <NavigationProperty Name="RegexGroup" Relationship="HornetModel.RegexGroupRegexEntry" FromRole="RegexEntry" ToRole="RegexGroup" />
+          <Property Name="RegexGroupId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="RegexGroupRegexEntry">
+          <End Type="HornetModel.RegexGroup" Role="RegexGroup" Multiplicity="1" />
+          <End Type="HornetModel.RegexEntry" Role="RegexEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="RegexGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="RegexEntry">
+              <PropertyRef Name="RegexGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs" Space="C-S">
+        <Alias Key="Model" Value="HornetModel" />
+        <Alias Key="Target" Value="HornetModel.Store" />
+        <EntityContainerMapping CdmEntityContainer="HornetModelContainer" StorageEntityContainer="HornetModelTargetContainer">
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <edmx:Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </edmx:Connection>
+    <edmx:Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </edmx:Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
