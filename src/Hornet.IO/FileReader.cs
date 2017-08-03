@@ -1,13 +1,19 @@
-﻿using System;
+﻿using Hornet.IO.FileManagement;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using File = Pri.LongPath.File;
+using FileInfo = Pri.LongPath.FileInfo;
 
 namespace Hornet.IO
 {
-    internal class FileReader
+    public class FileReader
     {
+        private string _filePath;
+        private ScanOptions _options;
         private bool _includeMD5;
         private bool _includeRegex;
         private bool _includeSHA1;
@@ -15,6 +21,8 @@ namespace Hornet.IO
 
         public FileReader(string filePath, ScanOptions options, bool includeMD5, bool includeSHA1, bool includeSHA256, bool includeRegex)
         {
+            _filePath = filePath;
+            _options = options;
             _includeMD5 = includeMD5;
             _includeSHA1 = includeSHA1;
             _includeSHA256 = includeSHA256;
@@ -23,7 +31,90 @@ namespace Hornet.IO
 
         public FileResult GetResult()
         {
-            throw new NotImplementedException();
+            FileInfo fileInfo;
+            if (!CanRead(out fileInfo))
+            {
+                return new FileResult() { ResultType = ResultType.Failed };
+            }
+
+            if (!ShouldParse(fileInfo))
+            {
+                return new FileResult() { ResultType = ResultType.Skipped };
+            }
+
+            try
+            {
+                using (Stream stream = GetStream(fileInfo))
+                {
+                    FileResult result = new FileResult();
+
+                    if (_includeMD5) result.MD5 = HashReader.GetMD5(stream, true);
+                    if (_includeSHA1) result.SHA1 = HashReader.GetSHA1(stream, true);
+                    if (_includeSHA256) result.SHA256 = HashReader.GetSHA256(stream, true);
+
+                    return result;
+                }
+            }
+            catch (Exception)
+            {
+                return new FileResult() { ResultType = ResultType.Failed };
+            }
+        }
+
+        private bool CanRead(out FileInfo fileInfo)
+        {
+            fileInfo = null;
+            try
+            {
+                fileInfo = new FileInfo(_filePath);
+                if (fileInfo.Exists)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private Stream GetStream(FileInfo fileInfo)
+        {
+            if (_options.HoldBufferInMemory)
+            {
+                long sizeLimit = _options.InMemoryFileSizeLimit < 1 ? 0 : _options.InMemoryFileSizeLimit;
+                if (sizeLimit == 0 || fileInfo.Length <= sizeLimit)
+                {
+                    MemoryStream memStream = new MemoryStream();
+                    using (FileStream fileStream = fileInfo.OpenRead())
+                    {
+                        fileStream.CopyTo(memStream);
+                        memStream.Seek(0, SeekOrigin.Begin);
+                    }
+                    return memStream;
+                }
+            }
+
+            return fileInfo.OpenRead();
+        }
+
+        private bool ShouldParse(FileInfo fileInfo)
+        {
+            //TODO: full range of options here, need to check file types
+            //amongst other things like size etc.
+            if (_includeMD5 == false &&
+                _includeSHA1 == false && 
+                _includeSHA256 == false &&
+                _includeRegex == false)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

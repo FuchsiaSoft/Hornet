@@ -9,7 +9,7 @@ using FileInfo = Pri.LongPath.FileInfo;
 
 namespace Hornet.IO
 {
-    internal class FileResult
+    public class FileResult
     {
         public ResultType ResultType { get; set; }
         public string Name { get; set; }

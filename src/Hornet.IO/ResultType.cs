@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hornet.IO
 {
-    internal enum ResultType
+    public enum ResultType
     {
         Skipped = 1,
         Failed = 2,

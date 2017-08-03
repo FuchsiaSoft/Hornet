@@ -1,0 +1,8 @@
+﻿This file is here so we have something to run
+hash tests against for comparison, knowing the hash
+of this file from a separate source to make sure
+that the string is consistently being output
+correctly and pick up any code changes in the 
+hash parts of Hornet.IO that might affect its
+output.  I think it's unlikely, but you never
+know!
