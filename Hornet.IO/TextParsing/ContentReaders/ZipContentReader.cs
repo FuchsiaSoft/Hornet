@@ -8,5 +8,7 @@ namespace Hornet.IO.TextParsing.ContentReaders
 {
     public class ZipContentReader
     {
+        //TODO: content reader that delegates to other content readers
+        //based on its content
     }
 }

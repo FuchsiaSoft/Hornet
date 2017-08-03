@@ -347,7 +347,7 @@
                                     <TextBox Grid.Column="1" FontSize="10" HorizontalContentAlignment="Right"/>
                                     <Label Grid.Column="2" FontSize="10" Padding="0" Content="MB"/>
                                 </Grid>
-                                <CheckBox Content="Fully load files in-memory when running multiple hashes" x:Name="chkInMemory"/>
+                                <CheckBox Content="Fully load files in-memory before running multiple checks" x:Name="chkInMemory"/>
                                 <Grid IsEnabled="{Binding ElementName=chkInMemory, Path=IsChecked}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="220"/>
@@ -491,7 +491,6 @@
                                     </TextBlock>
                                 </CheckBox>
                                 <CheckBox Content="Include attachments to MSG files (only includes complex formats selected above)" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
-                                <CheckBox Content="Check MSG body without parsing HTML" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
                                 <CheckBox Content="Include MSG sender and recipient information" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
                                 <CheckBox Content="Include MSG subject" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
                             </StackPanel>

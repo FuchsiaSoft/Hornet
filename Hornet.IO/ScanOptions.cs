@@ -1,11 +1,15 @@
 ﻿using Hornet.IO.FileManagement;
 using Hornet.IO.TextParsing;
+using Ionic.Zip;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using File = Pri.LongPath.File;
 
 namespace Hornet.IO
 {
@@ -19,18 +23,14 @@ namespace Hornet.IO
         /// <summary>
         /// The credentials to use for impersonation if required
         /// </summary>
+        [JsonIgnore]
         public NetworkCredential Credentials { get; set; }
 
         /// <summary>
         /// The path to serve as root directory for the scan
         /// </summary>
+        [JsonIgnore]
         public string RootDirectoryPath { get; set; }
-
-        /// <summary>
-        /// Gets or sets the maximum directory queue size, zero or
-        /// any non positive int is counted as unlimited
-        /// </summary>
-        public int MaxDirectoryQueueSize { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets the maximum number of worker threads to use,
@@ -50,24 +50,29 @@ namespace Hornet.IO
         public int RegexTimeoutSeconds { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets a <see cref="bool"/> indicating whether or not
-        /// to hold the buffer in memory for files when running multiple
-        /// hashes
+        /// Gets or sets a <see cref="long"/> representing the maxumum length
+        /// of a file to attempt hashing.  Zero is treated as unlimited.  Default is 0
         /// </summary>
-        public bool HoldBufferForMultipleHashes { get; set; } = false;
-
-        /// <summary>
-        /// Gets or sets a <see cref="long"/> representing the maximum length
-        /// of a file to hold in an in-memory buffer if <see cref="HoldBufferForMultipleHashes"/>
-        /// is set to true.  Zero is treated as unlimited.
-        /// </summary>
-        public long MaxBufferSize { get; set; } = 0;
+        public long MaxSizeToAttemptHash { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> indicating whether or not to attempt
         /// unpacking archive files and hashing their internals.  Default false
         /// </summary>
         public bool IncludeZip { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> indicating whether or not to hold
+        /// an entire file in memory before attempting multiple checks.  Default true
+        /// </summary>
+        public bool HoldBufferInMemory { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets a <see cref="long"/> representing the maximum length of a file
+        /// to hold fully in memory if <see cref="HoldBufferInMemory"/> is set to true.
+        /// Zero is treated as unlimited.  Default is 0
+        /// </summary>
+        public long InMemoryFileSizeLimit { get; set; } = 0;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> indicating whether or not to un-pack
@@ -91,17 +96,50 @@ namespace Hornet.IO
         /// </summary>
         public bool UnzipToDiskIfTooBig { get; set; } = false;
 
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> indicating whether or not to enumerate
+        /// the entire file system in the background whilst also working.
+        /// This will enable overall progress tracking once enumeration has
+        /// finished
+        /// </summary>
+        public bool BackgroundEnumerate { get; set; } = true;
 
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> indicating whether or not to build
+        /// a list of files that were found to be encrypted
+        /// </summary>
+        public bool ListEncryptedFiles { get; set; } = true;
+
+        [JsonConverter(typeof(StringEnumConverter))]
         public EncodingType EncodingType { get; set; }
 
         /// <summary>
         /// The list of <see cref="HashInfoGroup"/> objects to match against
         /// </summary>
-        public IList<HashInfoGroup> HashGroups { get; set; } = new List<HashInfoGroup>();
+        public List<HashInfoGroup> HashGroups { get; set; } = new List<HashInfoGroup>();
 
         /// <summary>
         /// The list of <see cref="RegexInfoGroup"/> objects to match against
         /// </summary>
-        public IList<RegexInfoGroup> RegexGroups { get; set; } = new List<RegexInfoGroup>();
+        public List<RegexInfoGroup> RegexGroups { get; set; } = new List<RegexInfoGroup>();
+
+        public bool SaveToFile(string filePath)
+        {
+            try
+            {
+                string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+                File.WriteAllText(filePath, json);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public void ReadFromFile(string filePath)
+        {
+
+        }
     }
 }

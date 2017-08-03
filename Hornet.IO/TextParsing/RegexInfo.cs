@@ -13,6 +13,8 @@ namespace Hornet.IO.TextParsing
             "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
             "Cras eget tortor nec risus gravida maximus.";
 
+        private Regex _regex = null;
+
         private bool? _isValid;
 
         /// <summary>
@@ -38,8 +40,7 @@ namespace Hornet.IO.TextParsing
 
             try
             {
-                Regex regex = new Regex(Pattern);
-                regex.Match(_sampleString);
+                AsRegex().IsMatch(_sampleString);
             }
             catch (Exception)
             {
@@ -47,6 +48,16 @@ namespace Hornet.IO.TextParsing
             }
 
             return true;            
+        }
+
+        public Regex AsRegex()
+        {
+            if (_regex == null)
+            {
+                _regex = new Regex(Pattern, RegexOptions.Compiled);
+            }
+
+            return _regex;
         }
     }
 }

@@ -3,31 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Path = Pri.LongPath.Path;
 
 namespace Hornet.IO.FileManagement
 {
     public class HashResult
     {
         /// <summary>
-        /// The path of the matched file
+        /// The name of the matched file
         /// </summary>
-        public string FilePath { get; internal set; }
+        public string Name { get; set; }
+
+        public string ShortName
+        {
+            get
+            {
+                return Path.GetFileName(Name);
+            }
+        }
 
         /// <summary>
         /// The MIME type of the matched file
         /// </summary>
         public string MimeType { get; internal set; }
-
-        /// <summary>
-        /// Gets a <see cref="bool"/> indicating whether
-        /// the match was an embedded file
-        /// </summary>
-        public bool EmbeddedFile { get; internal set; } = false;
-
-        /// <summary>
-        /// The path of the parent file, if the file is embedded
-        /// </summary>
-        public string ParentPath { get; internal set; } = string.Empty;
 
         /// <summary>
         /// The length of the matched file
@@ -37,12 +35,6 @@ namespace Hornet.IO.FileManagement
         /// <summary>
         /// The <see cref="HashInfo"/> that was matched
         /// </summary>
-        public HashInfo MatchedHashInfo { get; internal set; }
-
-        /// <summary>
-        /// Gets a <see cref="long"/> representing the length of the
-        /// parent file if the subject file was embedded
-        /// </summary>
-        public long ParentLength { get; internal set; }
+        public IEnumerable<HashInfo> MatchedHashInfos { get; internal set; }
     }
 }

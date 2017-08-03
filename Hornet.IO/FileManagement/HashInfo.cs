@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +23,7 @@ namespace Hornet.IO.FileManagement
         /// <summary>
         /// The type of Hash
         /// </summary>
+        [JsonConverter(typeof(StringEnumConverter))]
         public HashType HashType { get; set; }
 
         /// <summary>

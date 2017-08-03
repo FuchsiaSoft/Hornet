@@ -16,6 +16,7 @@ using System.Security;
 using MimeTypes;
 using Ionic.Zip;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Hornet.IO
 {
@@ -29,47 +30,39 @@ namespace Hornet.IO
         private static HashSet<string> _sha1HashSet = new HashSet<string>();
         private static HashSet<string> _sha256HashSet = new HashSet<string>();
 
+        //Private list of regexinfos to make multi threaded checking easier, so
+        //no need to lock the entire results group for enumeration and adding,
+        //has the references set to those same as groups for easy lookup later
+        private static List<RegexInfo> _regexInfos = new List<RegexInfo>();
+
         //Private flags for convenience instead of constantly checking the
         //hashset counts
         private static bool _includeMD5 = false;
         private static bool _includeSHA1 = false;
         private static bool _includeSHA256 = false;
+        private static bool _includeRegex = false;
 
         private static ScanOptions _options;
 
         //Some of the options are copied to here on start scan just
         //for the sake of concise syntax
-        private static int _dirQueueLimit;
         private static int _fileQueueLimit;
 
         //Working queues used to avoid enormous amounts of recursion on SAN
         //scale file systems
-        private static ConcurrentQueue<string> _directoryEnumerationQueue = new ConcurrentQueue<string>();
+        private static ConcurrentStack<string> _directoryStack = new ConcurrentStack<string>();
+        private static ConcurrentStack<string> _backgroundDirectoryStack = new ConcurrentStack<string>();
         private static ConcurrentQueue<string> _fileWorkingQueue = new ConcurrentQueue<string>();
 
-        private static Thread _directoryEnumerationThread;
-        private static Thread _fileEnumerationThread;
-        private static List<Thread> _workerThreads = new List<Thread>();
-
         //Flags for maintaining state with all the different threads.
+        private static bool _backgroundEnumerationFinished = false;
         private static bool _directoryEnumerationFinished = false;
-        private static bool _fileEnumerationFinished = false;
 
+        private static List<Thread> _workerThreads = new List<Thread>();
 
         //Used when credentials are provided so the scan manager will operate within
         //this impersonation context
         private static Impersonation _impersonationContext;
-
-        //Hashset for checking whether to bother attempting the content
-        //of a file based on its extension
-        private static HashSet<string> _validExtensions = new HashSet<string>();
-
-        //various sets of file extensions
-        private static List<string> _pdfs = new List<string>()
-        {
-            ".pdf",
-            ".PDF"
-        };
 
         /// <summary>
         /// Gets the current status of the scan as a <see cref="ScanStatus"/>
@@ -95,7 +88,6 @@ namespace Hornet.IO
             }
 
             _options = options;
-            _dirQueueLimit = _options.MaxDirectoryQueueSize;
             _fileQueueLimit = _options.MaxFileQueueSize;
 
             AddNewScanEvent(ScanEventType.Start, DateTime.Now);
@@ -107,7 +99,10 @@ namespace Hornet.IO
 
             await Task.Run(() =>
             {
+                
                 AddHashesToInternalSets();
+
+                AddRegexToInternalList();
 
                 AddGroupsToResultProperty();
 
@@ -119,25 +114,291 @@ namespace Hornet.IO
                     Status.ScanFinished = true;
                     Status.Message = "Failed initial enumeration";
                     AddNewScanEvent(ScanEventType.Finish, DateTime.Now);
+                    return;
                 }
 
-                EstablishExtensionsForContent();
+                if (_options.BackgroundEnumerate) StartBackgroundEnumeration();
 
-                StartDirectoryEnumerationThread();
+                StartDirectoryEnumeration();
 
-                StartFileEnumerationThread();
-
-                DoAssignment();
+                StartFileWorkers();
             });
         }
 
-        private static void EstablishExtensionsForContent()
+        
+
+        private static void StartFileWorkers()
         {
-            //TODO: check options properly
-            foreach (string extension in _pdfs)
+            int threadCount = _options.MaxWorkerThreads < 1 ? 1 : _options.MaxWorkerThreads;
+
+            for (int i = 0; i < threadCount; i++)
             {
-                _validExtensions.Add(extension);
+                Thread thread = new Thread(DoWork);
+                _workerThreads.Add(thread);
+                thread.Start();
             }
+        }
+
+        private static void DoWork()
+        {
+            while (_directoryEnumerationFinished == false || _fileWorkingQueue.Count > 0)
+            {
+                string filePath;
+                if (_fileWorkingQueue.TryDequeue(out filePath))
+                {
+                    FileReader fileReader = new FileReader(filePath, _options, _includeMD5, _includeSHA1, _includeSHA256, _includeRegex);
+                    FileResult fileResult = fileReader.GetResult();
+
+                    switch (fileResult.ResultType)
+                    {
+                        case ResultType.Skipped:
+                            Interlocked.Increment(ref Status.TotalFilesSkipped);
+                            break;
+
+                        case ResultType.Failed:
+                            Interlocked.Increment(ref Status.TotalFilesFailed);
+                            break;
+
+                        case ResultType.Read:
+                            Interlocked.Increment(ref Status.TotalFilesSucceeded);
+                            CheckResult(fileResult);
+                            break;
+
+                        case ResultType.Encrypted:
+                            Interlocked.Increment(ref Status.TotalFilesEncrypted);
+                            if (_options.ListEncryptedFiles)
+                            {
+                                Results.AddEncryptedFile(fileResult.Name);
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
+        private static void CheckResult(FileResult fileResult)
+        {
+            if (IsHashMatch(fileResult))
+            {
+                AddToHashResults(fileResult);
+            }
+
+            List<Tuple<RegexInfo,string>> matchedRegexInfos = new List<Tuple<RegexInfo, string>>();
+            if (IsRegexMatch(fileResult, matchedRegexInfos))
+            {
+                foreach (var match in matchedRegexInfos)
+                {
+                    AddToRegexMatch(fileResult, match.Item1, match.Item2);
+                }
+            }
+        }
+
+        private static void AddToRegexMatch(FileResult fileResult, RegexInfo regexInfo, string contentMatch)
+        {
+            lock (Results.RegexGroups)
+            {
+                foreach (RegexInfoGroup group in Results.RegexGroups)
+                {
+                    if (group.RegexInfos.Contains(regexInfo))
+                    {
+                        int index = group.RegexInfos.IndexOf(regexInfo);
+
+                        RegexResult regexResult = new RegexResult()
+                        {
+
+                        };
+                    }
+                    
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns a <see cref="bool"/> indicating whether the content of the file matched any
+        /// regex's specified.  If matches then matchedInfos out parameter will be populated
+        /// with <see cref="Tuple{T1, T2}"/>, with <see cref="T1"/> being the matched
+        /// <see cref="RegexInfo"/> and <see cref="T2"/> being the matched string
+        /// and a preview of text surrounding the match (if available)
+        /// </summary>
+        /// <param name="fileResult"></param>
+        /// <param name="matchedInfos"></param>
+        /// <returns></returns>
+        private static bool IsRegexMatch(FileResult fileResult, List<Tuple<RegexInfo, string>> matchedInfos)
+        {
+            if (string.IsNullOrWhiteSpace(fileResult.Content) && fileResult.EmbeddedResults.Count == 0)
+            {
+                return false;
+            }
+
+            if (matchedInfos == null) matchedInfos = new List<Tuple<RegexInfo, string>>();
+            foreach (RegexInfo regexInfo in _regexInfos)
+            {
+                MatchCollection matches = regexInfo.AsRegex().Matches(fileResult.Content);
+
+                for (int i = 0; i < matches.Count; i++)
+                {
+                    int startPreviewIndex = 0;
+                    if (matches[i].Index > 100) startPreviewIndex = matches[i].Index - 100;
+
+                    int endPreviewIndex = fileResult.Content.Length - 1;
+                    if (matches[i].Index + 120 < endPreviewIndex) endPreviewIndex = matches[i].Index + 120;
+
+                    string previewText = fileResult.Content.Substring(startPreviewIndex, endPreviewIndex - startPreviewIndex);
+                    matchedInfos.Add(new Tuple<RegexInfo, string>(regexInfo, previewText));
+                }
+            }
+
+            foreach (FileResult embeddedResult in fileResult.EmbeddedResults)
+            {
+                IsRegexMatch(embeddedResult, matchedInfos);
+            }
+
+            return matchedInfos.Count > 0;
+        }
+
+        private static void AddToHashResults(FileResult fileResult)
+        {
+            lock (Results.HashGroups)
+            {
+                foreach (HashInfoGroup group in Results.HashGroups)
+                {
+                    List<HashInfo> matchedHashInfos = new List<HashInfo>();
+                    if (fileResult.MD5 != null) matchedHashInfos.AddRange(group.MD5s.Where(h => h.Hash == fileResult.MD5));
+                    if (fileResult.SHA1 != null) matchedHashInfos.AddRange(group.SHA1s.Where(h => h.Hash == fileResult.SHA1));
+                    if (fileResult.SHA256 != null) matchedHashInfos.AddRange(group.SHA256s.Where(h => h.Hash == fileResult.SHA256));
+
+                    HashResult hashResult = new HashResult()
+                    {
+                        Length = fileResult.Length,
+                        MimeType = MimeTypeMap.GetMimeType(Path.GetExtension(fileResult.Name) ?? string.Empty),
+                        MatchedHashInfos = matchedHashInfos,
+                        Name = fileResult.Name
+                    };
+
+                    group.Matches.Add(hashResult);
+                }
+            }
+            
+        }
+
+        private static bool IsHashMatch(FileResult fileResult)
+        {
+            if (fileResult.MD5 != null && _md5HashSet.Contains(fileResult.MD5)) return true;
+            if (fileResult.SHA1 != null && _sha1HashSet.Contains(fileResult.SHA1)) return true;
+            if (fileResult.SHA256 != null && _sha256HashSet.Contains(fileResult.SHA256)) return true;
+
+            foreach (FileResult embeddedResult in fileResult.EmbeddedResults)
+            {
+                if (IsHashMatch(embeddedResult)) return true;
+            }
+
+            return false;
+        }
+
+        private static void StartDirectoryEnumeration()
+        {
+            //TODO: no plans to multi thread this actually, so does it
+            //need to be using a concurrent stack?... need to check where else
+            //I've accessed it
+            _directoryEnumerationFinished = false;
+
+            Thread thread = new Thread(() =>
+            {
+                DirectoryInfo rootDir = new DirectoryInfo(_options.RootDirectoryPath);
+
+                foreach (FileInfo fileInfo in rootDir.EnumerateFiles())
+                {
+                    CheckAndWaitForFileQueue();
+
+                    _fileWorkingQueue.Enqueue(fileInfo.FullName);
+                }
+
+                foreach (DirectoryInfo dir in rootDir.EnumerateDirectories())
+                {
+                    _directoryStack.Push(dir.FullName);
+                }
+
+                string dirPath;
+                while (_directoryStack.TryPop(out dirPath))
+                {
+                    try
+                    {
+                        DirectoryInfo dir = new DirectoryInfo(dirPath);
+                        foreach (FileInfo fileInfo in dir.EnumerateFiles())
+                        {
+                            CheckAndWaitForFileQueue();
+                            _fileWorkingQueue.Enqueue(fileInfo.FullName);
+                        }
+
+                        foreach (DirectoryInfo subDir in dir.EnumerateDirectories())
+                        {
+                            _directoryStack.Push(subDir.FullName);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                }
+
+                _directoryEnumerationFinished = true;
+            });
+
+            thread.Start();
+        }
+
+        private static void CheckAndWaitForFileQueue()
+        {
+            if (_fileQueueLimit < 1) return;
+
+            while (_fileWorkingQueue.Count >= _fileQueueLimit)
+            {
+                Thread.Sleep(1000);
+            }
+        }
+
+        private static void StartBackgroundEnumeration()
+        {
+            //TODO: multi thread this to make it run faster
+            _backgroundEnumerationFinished = false;
+            Status.TotalFileCount = 0;
+            Status.TotalDirectoryCount = 0;
+
+            Thread thread = new Thread(() =>
+            {
+                DirectoryInfo rootDir = new DirectoryInfo(_options.RootDirectoryPath);
+                Interlocked.Add(ref Status.TotalFileCount, rootDir.EnumerateFiles().Count());
+                Interlocked.Increment(ref Status.TotalDirectoryCount);
+
+                foreach (DirectoryInfo subDir in rootDir.EnumerateDirectories())
+                {
+                    _backgroundDirectoryStack.Push(subDir.FullName);
+                    Interlocked.Increment(ref Status.TotalDirectoryCount);
+                }
+
+                string dirPath;
+                while (_backgroundDirectoryStack.TryPop(out dirPath))
+                {
+                    try
+                    {
+                        DirectoryInfo dir = new DirectoryInfo(dirPath);
+                        Interlocked.Add(ref Status.TotalFileCount, dir.EnumerateFiles().Count());
+                        foreach (DirectoryInfo subDir in dir.EnumerateDirectories())
+                        {
+                            _backgroundDirectoryStack.Push(subDir.FullName);
+                            Interlocked.Increment(ref Status.TotalDirectoryCount);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        continue;
+                    }
+                }
+
+                _backgroundEnumerationFinished = true;
+            });
+
+            thread.Start();
         }
 
         /// <summary>
@@ -186,312 +447,31 @@ namespace Hornet.IO
             _impersonationContext?.Dispose();
         }
 
-        private static void DoAssignment()
+       
+        /// <summary>
+        /// Adds the option groups to the results property so that
+        /// we can easily add results to it without having to worry
+        /// about double adding matches
+        /// </summary>
+        private static void AddGroupsToResultProperty()
         {
-            int threadCount = _options.MaxWorkerThreads < 1 ? 1 : _options.MaxWorkerThreads;
-
-            for (int i = 0; i < threadCount; i++)
+            if (_options.HashGroups != null)
             {
-                Thread thread = new Thread(DoWork);
-                _workerThreads.Add(thread);
-                thread.Start();
-            }
-        }
-
-        private static void DoWork()
-        {
-            string filePath;
-
-            bool holdBuffer = false;
-            if (_options.HoldBufferForMultipleHashes)
-            {
-                int hashAlgoCount = 0;
-
-                if (_includeMD5) hashAlgoCount++;
-                if (_includeSHA1) hashAlgoCount++;
-                if (_includeSHA256) hashAlgoCount++;
-
-                if (hashAlgoCount > 1) holdBuffer = true;
-            }
-
-            long sizeOverride = _options.MaxBufferSize < 0 ? 0 : _options.MaxBufferSize;
-
-            while (_fileEnumerationFinished == false || _fileWorkingQueue.Count > 0)
-            {
-                if (_fileWorkingQueue.Count == 0)
-                {
-                    Thread.Sleep(1000);
-                }
-
-                while (_fileWorkingQueue.TryDequeue(out filePath))
-                {
-                    HashReader hashReader = new HashReader(filePath, holdBuffer, sizeOverride);
-
-                    ProcessFileForHashes(filePath, hashReader);
-
-                    //TODO: embedded files here
-                    if (_options.IncludeZip && ZipFile.IsZipFile(filePath))
-                    {
-                        ProcessZip(filePath);
-                    }
-
-                    FileReader contentReader = new FileReader(filePath);
-
-                    
-                }
-            }
-        }
-
-        private static void ProcessZip(string filePath)
-        {
-            try
-            {
-                FileInfo fileInfo = new FileInfo(filePath);
-
-                using (ZipFile zip = ZipFile.Read(filePath))
-                {
-                    bool? useDisk = CheckWhetherToUseDisk(fileInfo);
-
-                    if (useDisk == null) return; //skip the zip file, not allowed to use disk but it's too big
-
-                    foreach (ZipEntry entry in zip.Entries)
-                    {
-                        if ((bool)useDisk)
-                        {
-                            string tempFile = Path.GetTempFileName();
-                            using (Stream stream = File.OpenWrite(tempFile))
-                            {
-                                ProcessEmbeddedFileStream(filePath, entry, stream);
-                            }
-                            File.Delete(tempFile);
-                        }
-                        else
-                        {
-                            using (Stream stream = new MemoryStream())
-                            {
-                                ProcessEmbeddedFileStream(filePath, entry, stream);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                return;
-            }
-        }
-
-        private static bool? CheckWhetherToUseDisk(FileInfo fileInfo)
-        {
-            if (_options.UnzipInMemory)
-            {
-                long zipSizeOverride = _options.MaxZipInMemorySize < 0 ? 0 : _options.MaxZipInMemorySize;
-                if (zipSizeOverride == 0 || fileInfo.Length < zipSizeOverride)
-                {
-                    return false;
-                }
-                else
-                {
-                    if (_options.UnzipToDiskIfTooBig)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }
+                Results.HashGroups = _options.HashGroups;
             }
             else
             {
-                return true;
+                Results.HashGroups = new HashInfoGroup[0];
             }
-        }
 
-        private static void ProcessEmbeddedFileStream(string filePath, ZipEntry entry, Stream stream)
-        {
-            entry.Extract(stream);
-
-            if (_includeMD5)
+            if (_options.RegexGroups != null)
             {
-                string md5 = HashReader.GetHash(HashType.MD5, stream);
-                if (_md5HashSet.Contains(md5))
-                    AddResultToMatchedGroups(md5, HashType.MD5, filePath, true, entry.FileName, entry.UncompressedSize);
+                Results.RegexGroups = _options.RegexGroups;
             }
-
-            if (_includeSHA1)
+            else
             {
-                string sha1 = HashReader.GetHash(HashType.SHA1, stream);
-                if (_md5HashSet.Contains(sha1))
-                    AddResultToMatchedGroups(sha1, HashType.SHA1, filePath, true, entry.FileName, entry.UncompressedSize);
+                Results.RegexGroups = new RegexInfoGroup[0];
             }
-
-            if (_includeSHA256)
-            {
-                string sha256 = HashReader.GetHash(HashType.SHA256, stream);
-                if (_md5HashSet.Contains(sha256))
-                    AddResultToMatchedGroups(sha256, HashType.SHA256, filePath, true, entry.FileName, entry.UncompressedSize);
-            }
-        }
-
-        private static void ProcessFileForHashes(string filePath, HashReader hashReader)
-        {
-            if (_includeMD5)
-            {
-                string md5 = hashReader.GetHash(HashType.MD5);
-                if (_md5HashSet.Contains(md5)) AddResultToMatchedGroups(md5, HashType.MD5, filePath);
-            }
-
-            if (_includeSHA1)
-            {
-                string sha1 = hashReader.GetHash(HashType.SHA1);
-                if (_sha1HashSet.Contains(sha1)) AddResultToMatchedGroups(sha1, HashType.SHA1, filePath);
-            }
-
-            if (_includeSHA256)
-            {
-                string sha256 = hashReader.GetHash(HashType.SHA256);
-                if (_sha256HashSet.Contains(sha256)) AddResultToMatchedGroups(sha256, HashType.SHA256, filePath);
-            }
-        }
-
-        private static void AddResultToMatchedGroups(string hash, HashType type, string filePath, bool embedded = false, string embeddedName = "", long embeddedSize = 0)
-        {
-            try
-            {
-                foreach (HashInfoGroup hashGroup in Results.HashGroups)
-                {
-                    List<HashInfo> matchedHashInfos = new List<HashInfo>();
-                    if (type == HashType.MD5) matchedHashInfos.AddRange(hashGroup.MD5s.Where(h => h.Hash == hash));
-                    if (type == HashType.SHA1) matchedHashInfos.AddRange(hashGroup.SHA1s.Where(h => h.Hash == hash));
-                    if (type == HashType.SHA256) matchedHashInfos.AddRange(hashGroup.SHA256s.Where(h => h.Hash == hash));
-
-                    foreach (HashInfo hashInfo in matchedHashInfos)
-                    {
-                        FileInfo fileInfo = new FileInfo(filePath);
-                        string mimeType;
-                        if (embedded)
-                        {
-                            mimeType = MimeTypeMap.GetMimeType(Path.GetExtension(embeddedName ?? string.Empty));
-                        }
-                        else
-                        {
-                            mimeType = MimeTypeMap.GetMimeType(fileInfo.Extension ?? string.Empty);
-                        }
-
-                        HashResult result = new HashResult()
-                        {
-                            EmbeddedFile = embedded,
-                            ParentPath = embedded ? filePath : string.Empty,
-                            FilePath = embedded ? embeddedName : filePath,
-                            ParentLength = embedded ? fileInfo.Length : 0,
-                            Length = embedded ? embeddedSize : fileInfo.Length,
-                            MatchedHashInfo = hashInfo,
-                            MimeType = mimeType
-                        };
-
-                        hashGroup.Matches.Add(result);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                //TODO: implement proper logging here
-                return;
-            }
-        }
-
-        private static void StartDirectoryEnumerationThread()
-        {
-            _directoryEnumerationThread = new Thread(DoDirectoryEnumeration);
-            _directoryEnumerationThread.Start();
-        }
-
-        private static void DoDirectoryEnumeration()
-        {
-            DirectoryInfo rootDir = new DirectoryInfo(_options.RootDirectoryPath);
-
-            RecurseDirectory(rootDir);
-
-            lock (Status)
-            {
-                Status.FinalDirectoryCount = Status.TotalDirectoryCount;
-            }
-        }
-
-        private static void RecurseDirectory(DirectoryInfo dir)
-        {
-            try
-            {
-                foreach (DirectoryInfo subDir in dir.EnumerateDirectories())
-                {
-                    RecurseDirectory(subDir);
-                    while (_dirQueueLimit > 0 && _directoryEnumerationQueue.Count > _dirQueueLimit)
-                    {
-                        Thread.Sleep(1000);
-                    }
-
-                    _directoryEnumerationQueue.Enqueue(subDir.FullName);
-                    Interlocked.Increment(ref Status.TotalDirectoryCount);
-                }
-            }
-            catch (Exception)
-            {
-                return;
-            }
-        }
-
-        private static void StartFileEnumerationThread()
-        {
-            _fileEnumerationThread = new Thread(DoFileEnumeration);
-            _fileEnumerationThread.Start();
-        }
-
-        private static void DoFileEnumeration()
-        {
-            string dirPath;
-
-            while (!_directoryEnumerationFinished)
-            {
-                if (_directoryEnumerationQueue.Count == 0)
-                {
-                    //Right at the beginning there won't be anything in this
-                    //queue for a while so chillax
-                    Thread.Sleep(5000);
-                }
-
-                while (_directoryEnumerationQueue.TryPeek(out dirPath))
-                {
-                    try
-                    {
-                        DirectoryInfo dir = new DirectoryInfo(dirPath);
-                        IEnumerable<FileInfo> files = dir.EnumerateFiles();
-                        foreach (FileInfo file in files)
-                        {
-                            //if we have directories in queue but no room for them, just chillax here too
-                            while (_fileQueueLimit > 0 && _fileWorkingQueue.Count >= _fileQueueLimit)
-                            {
-                                Thread.Sleep(5000);
-                            }
-
-                            _fileWorkingQueue.Enqueue(file.FullName);
-                            Interlocked.Increment(ref Status.TotalFileCount);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        continue;
-                    }
-                }
-            }
-
-            _fileEnumerationFinished = true;
-        }
-
-        private static void AddGroupsToResultProperty()
-        {
-            Results.HashGroups = _options.HashGroups ?? new HashInfoGroup[0];
-            Results.RegexGroups = _options.RegexGroups ?? new RegexInfoGroup[0];
         }
 
         private static void AddNewScanEvent(ScanEventType type, DateTime stamp)
@@ -501,6 +481,30 @@ namespace Hornet.IO
                 EventType = type,
                 EventTimeStamp = stamp
             });
+        }
+
+        private static void AddRegexToInternalList()
+        {
+            if(_options.RegexGroups != null)
+            {
+                foreach (RegexInfoGroup group in _options.RegexGroups)
+                {
+                    if (group.RegexInfos != null && group.RegexInfos.Count > 0)
+                    {
+                        _includeRegex = true;
+                        foreach (RegexInfo regexInfo in group.RegexInfos)
+                        {
+                            //This will trigger compiling the regex's which are then
+                            //accessible as .AsRegex() to speed it all up later
+                            if (regexInfo.IsValid)
+                            {
+                                _regexInfos.Add(regexInfo);
+                            }
+                           
+                        }
+                    }
+                }
+            }
         }
 
         private static void AddHashesToInternalSets()

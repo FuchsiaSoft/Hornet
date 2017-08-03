@@ -83,38 +83,24 @@ namespace Hornet.IO
         public long TotalHashesPerformed { get { return FileHashesPerformed + EmbeddedFileHashesPerformed; } }
 
         /// <summary>
-        /// Gets or sets a <see cref="long"/> representing the total number of
+        /// Gets or sets a <see cref="int"/> representing the total number of
         /// directories that have been queued so far.
         /// </summary>
-        public long TotalDirectoryCount  = 0;
+        public int TotalDirectoryCount  = 0;
+
+        
 
         /// <summary>
-        /// Gets or sets a <see cref="long"/> representing the final number of directories
-        /// after all directory and subdirectory enumeration has finished.  Remains null
-        /// until all are finished
+        /// Gets or sets a <see cref="int"/> representing the total number
+        /// of files that have been found during background enumeration.
+        /// Remains zero if background enumeration is not enabled
         /// </summary>
-        public long? FinalDirectoryCount = null;
+        public int TotalFileCount = 0;
 
-        /// <summary>
-        /// Gets or sets a <see cref="long"/> representing the total number
-        /// of files that have been queued so far.
-        /// </summary>
-        public long TotalFileCount = 0;
-
-        /// <summary>
-        /// Gets the total number of files that have been processed in any way
-        /// </summary>
-        public static long TotalFilesProcessed { get; internal set; } = 0;
-
-        /// <summary>
-        /// Gets the total number of errors reading files (e.g. file no longer exists)
-        /// </summary>
-        public static long TotalFileErrors { get; internal set; } = 0;
-
-        /// <summary>
-        /// Gets the total number of content read failures (e.g. failed to extract text)
-        /// </summary>
-        public static long TotalReadFailures { get; internal set; } = 0;
+        public long TotalFilesSkipped = 0;
+        public long TotalFilesSucceeded = 0;
+        public long TotalFilesEncrypted = 0;
+        public long TotalFilesFailed = 0;
 
         /// <summary>
         /// Gets the total number of bytes that have been processed (ignoring duplicate reads)
