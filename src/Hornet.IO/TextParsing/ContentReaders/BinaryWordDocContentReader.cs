@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Hornet.IO.TextParsing.ContentReaders
 {
-    internal class BinaryWordDocContentReader : IContentReader
+    internal class BinaryWordDocContentReader : IFileFormatReader
     {
         public bool TryGetContent(string filePath, out string result)
         {

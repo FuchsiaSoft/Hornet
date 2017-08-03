@@ -115,7 +115,6 @@
     <Compile Include="TextParsing\ContentReaders\EmailContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\ZipContentReader.cs" />
     <Compile Include="TextParsing\EncodingType.cs" />
-    <Compile Include="TextParsing\FileReader.cs" />
     <Compile Include="TextParsing\IContentReader.cs" />
     <Compile Include="TextParsing\RegexInfo.cs" />
     <Compile Include="TextParsing\RegexInfoGroup.cs" />

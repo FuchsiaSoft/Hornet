@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Hornet.IO.TextParsing
 {
-    internal interface IContentReader
+    internal interface IFileFormatReader
     {
         bool TryGetContent(string filePath, out string result);
     }
