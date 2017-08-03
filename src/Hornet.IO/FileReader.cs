@@ -48,9 +48,9 @@ namespace Hornet.IO
                 {
                     FileResult result = new FileResult();
 
-                    if (_includeMD5) result.MD5 = HashReader.GetMD5(stream, true);
-                    if (_includeSHA1) result.SHA1 = HashReader.GetSHA1(stream, true);
-                    if (_includeSHA256) result.SHA256 = HashReader.GetSHA256(stream, true);
+                    DoHashReading(stream, result);
+
+                    
 
                     return result;
                 }
@@ -59,6 +59,13 @@ namespace Hornet.IO
             {
                 return new FileResult() { ResultType = ResultType.Failed };
             }
+        }
+
+        private void DoHashReading(Stream stream, FileResult result)
+        {
+            if (_includeMD5) result.MD5 = HashReader.GetMD5(stream, true);
+            if (_includeSHA1) result.SHA1 = HashReader.GetSHA1(stream, true);
+            if (_includeSHA256) result.SHA256 = HashReader.GetSHA256(stream, true);
         }
 
         private bool CanRead(out FileInfo fileInfo)

@@ -12,6 +12,21 @@ namespace Hornet.IO.TextParsing.ContentReaders
 {
     public class EmailContentReader : IFileFormatReader
     {
+        public bool TryGetContent(Stream fileStream, out string result)
+        {
+            Reader reader = new Reader();
+            result = string.Empty;
+            try
+            {
+                result = reader.ExtractMsgEmailBody(fileStream, false, "text/html", true);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool TryGetContent(string filePath, out string result)
         {
             try
