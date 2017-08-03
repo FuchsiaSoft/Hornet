@@ -171,9 +171,7 @@ namespace Hornet.IO
 
         private static void LogFileCountUpdate(FileResult fileResult)
         {
-            if (fileResult.MD5 != null) Interlocked.Increment(ref Status.FileHashesPerformed);
-            if (fileResult.SHA1 != null) Interlocked.Increment(ref Status.FileHashesPerformed);
-            if (fileResult.SHA256 != null) Interlocked.Increment(ref Status.FileHashesPerformed);
+            LogHashCounts(fileResult);
 
             switch (fileResult.ResultType)
             {
@@ -188,7 +186,6 @@ namespace Hornet.IO
                 case ResultType.Read:
                     Interlocked.Add(ref Status.TotalBytesProcessed, fileResult.Length);
                     Interlocked.Increment(ref Status.TotalFilesSucceeded);
-                    CheckResult(fileResult);
                     break;
 
                 case ResultType.Encrypted:
@@ -200,9 +197,18 @@ namespace Hornet.IO
                     break;
             }
 
+            
+        }
+
+        private static void LogHashCounts(FileResult fileResult)
+        {
+            if (fileResult.MD5 != null) Interlocked.Increment(ref Status.FileHashesPerformed);
+            if (fileResult.SHA1 != null) Interlocked.Increment(ref Status.FileHashesPerformed);
+            if (fileResult.SHA256 != null) Interlocked.Increment(ref Status.FileHashesPerformed);
+
             foreach (FileResult embeddedResult in fileResult.EmbeddedResults)
             {
-                LogFileCountUpdate(embeddedResult);
+                LogHashCounts(embeddedResult);
             }
         }
 
