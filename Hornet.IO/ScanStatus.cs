@@ -66,23 +66,6 @@ namespace Hornet.IO
         public long FileHashesPerformed = 0;
 
         /// <summary>
-        /// Gets a <see cref="long"/> value representing the total number of
-        /// hashes that have been performed on files embedded within other
-        /// files, including where the same embedded file has been hashed
-        /// multiple times with differing algorithms
-        /// </summary>
-        public long EmbeddedFileHashesPerformed = 0;
-
-        /// <summary>
-        /// Shortcut to returning <see cref="FileHashesPerformed"/> + <see cref="EmbeddedFileHashesPerformed"/>:
-        /// Gets a <see cref="long"/> value representing the total number of
-        /// hashes that have been performed on files and embedded files combined,
-        /// including where the same file or embedded file has been hashes multiple
-        /// times with differing algorithms
-        /// </summary>
-        public long TotalHashesPerformed { get { return FileHashesPerformed + EmbeddedFileHashesPerformed; } }
-
-        /// <summary>
         /// Gets or sets a <see cref="int"/> representing the total number of
         /// directories that have been queued so far.
         /// </summary>
@@ -105,7 +88,7 @@ namespace Hornet.IO
         /// <summary>
         /// Gets the total number of bytes that have been processed (ignoring duplicate reads)
         /// </summary>
-        public static long TotalBytesProcessed { get; internal set; } = 0;
+        public long TotalBytesProcessed = 0;
 
         /// <summary>
         /// Gets a <see cref="IList{T}"/> with <see cref="T"/> as <see cref="ScanEvent"/>

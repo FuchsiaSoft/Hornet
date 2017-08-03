@@ -137,6 +137,19 @@ namespace Hornet.IO
                 _workerThreads.Add(thread);
                 thread.Start();
             }
+
+            Thread watcherThread = new Thread(() =>
+            {
+                while (_workerThreads.Count(t=>t.IsAlive) > 0)
+                {
+                    Thread.Sleep(1000);
+                }
+
+                Status.Message = "Finished";
+                Status.ScanFinished = true;
+                Status.ScanRunning = false;
+                AddNewScanEvent(ScanEventType.Finish, DateTime.Now);
+            });
         }
 
         private static void DoWork()
@@ -149,30 +162,47 @@ namespace Hornet.IO
                     FileReader fileReader = new FileReader(filePath, _options, _includeMD5, _includeSHA1, _includeSHA256, _includeRegex);
                     FileResult fileResult = fileReader.GetResult();
 
-                    switch (fileResult.ResultType)
-                    {
-                        case ResultType.Skipped:
-                            Interlocked.Increment(ref Status.TotalFilesSkipped);
-                            break;
+                    LogFileCountUpdate(fileResult);
 
-                        case ResultType.Failed:
-                            Interlocked.Increment(ref Status.TotalFilesFailed);
-                            break;
-
-                        case ResultType.Read:
-                            Interlocked.Increment(ref Status.TotalFilesSucceeded);
-                            CheckResult(fileResult);
-                            break;
-
-                        case ResultType.Encrypted:
-                            Interlocked.Increment(ref Status.TotalFilesEncrypted);
-                            if (_options.ListEncryptedFiles)
-                            {
-                                Results.AddEncryptedFile(fileResult.Name);
-                            }
-                            break;
-                    }
+                    if (fileResult.ResultType == ResultType.Read) CheckResult(fileResult);
                 }
+            }
+        }
+
+        private static void LogFileCountUpdate(FileResult fileResult)
+        {
+            if (fileResult.MD5 != null) Interlocked.Increment(ref Status.FileHashesPerformed);
+            if (fileResult.SHA1 != null) Interlocked.Increment(ref Status.FileHashesPerformed);
+            if (fileResult.SHA256 != null) Interlocked.Increment(ref Status.FileHashesPerformed);
+
+            switch (fileResult.ResultType)
+            {
+                case ResultType.Skipped:
+                    Interlocked.Increment(ref Status.TotalFilesSkipped);
+                    break;
+
+                case ResultType.Failed:
+                    Interlocked.Increment(ref Status.TotalFilesFailed);
+                    break;
+
+                case ResultType.Read:
+                    Interlocked.Add(ref Status.TotalBytesProcessed, fileResult.Length);
+                    Interlocked.Increment(ref Status.TotalFilesSucceeded);
+                    CheckResult(fileResult);
+                    break;
+
+                case ResultType.Encrypted:
+                    Interlocked.Increment(ref Status.TotalFilesEncrypted);
+                    if (_options.ListEncryptedFiles)
+                    {
+                        Results.AddEncryptedFile(fileResult.Name);
+                    }
+                    break;
+            }
+
+            foreach (FileResult embeddedResult in fileResult.EmbeddedResults)
+            {
+                LogFileCountUpdate(embeddedResult);
             }
         }
 
@@ -186,29 +216,36 @@ namespace Hornet.IO
             List<Tuple<RegexInfo,string>> matchedRegexInfos = new List<Tuple<RegexInfo, string>>();
             if (IsRegexMatch(fileResult, matchedRegexInfos))
             {
-                foreach (var match in matchedRegexInfos)
-                {
-                    AddToRegexMatch(fileResult, match.Item1, match.Item2);
-                }
+                AddToRegexMatch(fileResult, matchedRegexInfos);
             }
         }
 
-        private static void AddToRegexMatch(FileResult fileResult, RegexInfo regexInfo, string contentMatch)
+        private static void AddToRegexMatch(FileResult fileResult, IEnumerable<Tuple<RegexInfo,string>> matches)
         {
             lock (Results.RegexGroups)
             {
                 foreach (RegexInfoGroup group in Results.RegexGroups)
                 {
-                    if (group.RegexInfos.Contains(regexInfo))
+                    RegexResult result = new RegexResult()
                     {
-                        int index = group.RegexInfos.IndexOf(regexInfo);
+                        Length = fileResult.Length,
+                        Name = fileResult.Name,
+                        MimeType = MimeTypeMap.GetMimeType(Path.GetExtension(fileResult.Name) ?? string.Empty) 
+                    };
 
-                        RegexResult regexResult = new RegexResult()
+                    List<Tuple<RegexInfo, string>> matchedRegexInfos = new List<Tuple<RegexInfo, string>>();
+
+                    foreach (var match in matches)
+                    {
+                        if (group.RegexInfos.Contains(match.Item1))
                         {
-
-                        };
+                            matchedRegexInfos.Add(match);
+                        }
                     }
-                    
+
+                    result.MatchedRegexInfos = matchedRegexInfos;
+
+                    group.Matches.Add(result);
                 }
             }
         }
@@ -266,6 +303,8 @@ namespace Hornet.IO
                     if (fileResult.MD5 != null) matchedHashInfos.AddRange(group.MD5s.Where(h => h.Hash == fileResult.MD5));
                     if (fileResult.SHA1 != null) matchedHashInfos.AddRange(group.SHA1s.Where(h => h.Hash == fileResult.SHA1));
                     if (fileResult.SHA256 != null) matchedHashInfos.AddRange(group.SHA256s.Where(h => h.Hash == fileResult.SHA256));
+
+                    if (matchedHashInfos.Count == 0) continue; //only add to the groups where it belongs
 
                     HashResult hashResult = new HashResult()
                     {
