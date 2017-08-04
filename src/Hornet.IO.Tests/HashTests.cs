@@ -21,10 +21,10 @@ namespace Hornet.IO.Tests
         [TestMethod]
         public void Verify_Hash_Output_Strings()
         {
-            string knownFilePath = "TestFiles/Text/HashOutputSampleFile.txt";
-            string knownMD5      = "B64F2AA367438799A59E88A66DA1BF61";
-            string knownSHA1     = "7A4CE47EB34024DC2B1D9B40FCE7ACCFAB3FAA83";
-            string knownSHA256   = "4A23F5587B493C39173287E77F0912C55CAB9F26305B80F4E8142AFEEA0C6808";
+            string knownFilePath = "TestFiles/HashOutputSampleFile.pdf";
+            string knownMD5      = "97886269414575E12A8F6F92B1340100";
+            string knownSHA1     = "A96C5DC23FF9CF79EEBB6BC181A6BACE582F2060";
+            string knownSHA256   = "A9B5E893B658DBC08BAE3183DBA47324DE130D066C70DD1D7A93C9988646BAAC";
 
             FileReader reader = new FileReader(knownFilePath, new ScanOptions(), true, true, true, false);
             FileResult result = reader.GetResult();

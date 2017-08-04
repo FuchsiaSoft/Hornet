@@ -61,9 +61,6 @@
     <Content Include="TestFiles\Text\ExampleTxt.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestFiles\Text\HashOutputSampleFile.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TestFiles\Word\" />
@@ -73,6 +70,11 @@
       <Project>{dcbcbc08-76a1-4b6d-9d8e-404d50e2a69a}</Project>
       <Name>Hornet.IO</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestFiles\HashOutputSampleFile.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
