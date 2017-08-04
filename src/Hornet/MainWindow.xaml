@@ -65,7 +65,7 @@
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -83,7 +83,7 @@
                 <RowDefinition Height="20"/>
                 <RowDefinition Height="200"/>
             </Grid.RowDefinitions>
-            
+
             <Separator Grid.Row="1" Margin="10,0,10,0" VerticalAlignment="Center"/>
             <DockPanel Grid.Row="0">
                 <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
@@ -94,7 +94,7 @@
                         <TextBlock Style="{StaticResource Header}" Text="HASH SETS" Margin="5,3,5,3"/>
                     </StackPanel>
                 </Border>
-                
+
                 <Grid DockPanel.Dock="Top">
                     <TextBox Margin="3"/>
                     <Path Fill="SlateGray" HorizontalAlignment="Right"
@@ -174,7 +174,7 @@
                             selected regex sets go here
                         </ListView>
                     </DockPanel>
-                    
+
                 </Grid>
             </DockPanel>
             <DockPanel Grid.Row="4">
@@ -318,7 +318,7 @@
                                 </CheckBox>
                             </StackPanel>
                         </Grid>
-                        
+
                     </GroupBox>
 
                     <GroupBox Header="RESOURCE MANAGEMENT SETTINGS">
@@ -405,7 +405,7 @@
                                     <Label Grid.Column="2" FontSize="12" VerticalAlignment="Center" Padding="0" Margin="5,0,0,0" FontWeight="Bold" Content="{Binding ElementName=sldThreads, Path=Value}"/>
                                 </Grid>
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-                                    
+
                                 </StackPanel>
                             </StackPanel>
                         </Grid>
@@ -495,12 +495,12 @@
                                 <CheckBox Content="Include MSG subject" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
                             </StackPanel>
                         </Grid>
-                        
+
                     </GroupBox>
                 </StackPanel>
             </DockPanel>
             <Separator Grid.Row="1" Margin="10,0,10,0" VerticalAlignment="Center"/>
-            
+
         </Grid>
 
         <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Margin="0,0,10,0" HorizontalAlignment="Right" VerticalAlignment="Center"
