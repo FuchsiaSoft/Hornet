@@ -110,6 +110,19 @@ namespace Hornet.IO
         /// </summary>
         public bool ListEncryptedFiles { get; set; } = true;
 
+        /// <summary>
+        /// Gets or sets a <see cref="bool"/> indicating whether or not to
+        /// always attempt text decoding if file can not otherwise
+        /// be read
+        /// </summary>
+        public bool AttemptTextDecode { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets a <see cref="long"/> representing the maximum
+        /// length of a file to attempt text decoding
+        /// </summary>
+        public long MaxSizeToTextDecode { get; set; } = 0;
+
         [JsonConverter(typeof(StringEnumConverter))]
         public EncodingType EncodingType { get; set; }
 

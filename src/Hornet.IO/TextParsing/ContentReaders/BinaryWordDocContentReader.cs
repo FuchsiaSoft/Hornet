@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Hornet.IO.TextParsing.ContentReaders
 {
-    internal class BinaryWordDocContentReader : IFileFormatReader
+    internal class BinaryWordDocContentReader : IContentReader
     {
         public bool TryGetContent(Stream fileStream, out string result)
         {

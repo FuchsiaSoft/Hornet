@@ -10,7 +10,7 @@ using File = Pri.LongPath.File;
 
 namespace Hornet.IO.TextParsing.ContentReaders
 {
-    public class EmailContentReader : IFileFormatReader
+    public class EmailContentReader : IContentReader
     {
         public bool TryGetContent(Stream fileStream, out string result)
         {

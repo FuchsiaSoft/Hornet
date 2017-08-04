@@ -1,4 +1,6 @@
 ﻿using Hornet.IO.FileManagement;
+using Hornet.IO.TextParsing;
+using Hornet.IO.TextParsing.ContentReaders;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using File = Pri.LongPath.File;
 using FileInfo = Pri.LongPath.FileInfo;
+using Path = Pri.LongPath.Path;
 
 namespace Hornet.IO
 {
@@ -50,7 +53,7 @@ namespace Hornet.IO
 
                     DoHashReading(stream, result);
 
-                    
+                    DoContentReading(stream, result);
 
                     return result;
                 }
@@ -58,6 +61,37 @@ namespace Hornet.IO
             catch (Exception)
             {
                 return new FileResult() { ResultType = ResultType.Failed };
+            }
+        }
+
+        private void DoContentReading(Stream stream, FileResult result)
+        {
+            if (!_includeRegex) return;
+
+            IContentReader reader = null;
+
+            switch (Path.GetExtension(_filePath).ToUpper())
+            {
+                case ".TXT":
+                    //TODO: pick up here
+                    break;
+
+                default:
+                    if (_options.AttemptTextDecode) reader = new TextContentReader(_options.EncodingType);
+                    break;
+            }
+
+            if (reader != null)
+            {
+                string output;
+                if (reader.TryGetContent(stream, out output))
+                {
+                    result.Content = output;
+                }
+                else
+                {
+                    result.Content = string.Empty;
+                }
             }
         }
 
