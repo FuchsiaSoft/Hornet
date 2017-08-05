@@ -26,7 +26,7 @@ namespace Hornet.IO.TextParsing.ContentReaders
                 StringBuilder sb = new StringBuilder();
                 foreach (HtmlNode node in nodes)
                 {
-                    sb.AppendLine(node.InnerText);
+                    sb.Append(node.InnerText);
                 }
                 result = sb.ToString();
                 return true;
