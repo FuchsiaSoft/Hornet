@@ -86,6 +86,10 @@ namespace Hornet.IO
                     reader = new HtmlContentReader();
                     break;
 
+                case ".DOCX":
+                    reader = new DocxContentReader();
+                    break;
+
                 default:
                     if (_options.AttemptTextDecode)
                     {

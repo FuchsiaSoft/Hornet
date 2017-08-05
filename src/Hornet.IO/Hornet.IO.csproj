@@ -101,6 +101,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileManagement\HashInfo.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="ScanStatus.cs" />
     <Compile Include="TextParsing\ContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\BinaryWordDocContentReader.cs" />
+    <Compile Include="TextParsing\ContentReaders\DocxContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\EmailContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\HtmlContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\PdfContentReader.cs" />
