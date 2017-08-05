@@ -73,7 +73,7 @@ namespace Hornet.IO
             switch (Path.GetExtension(_filePath).ToUpper())
             {
                 case ".TXT":
-                    //TODO: pick up here
+                    reader = new TextContentReader(_options.EncodingType);
                     break;
 
                 default:
