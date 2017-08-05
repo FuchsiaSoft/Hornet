@@ -7,6 +7,7 @@
         xmlns:conv="clr-namespace:Hornet.Converters"
         mc:Ignorable="d"
         Title="HORNET - Scan control centre" Height="700" Width="800"
+        DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
         ResizeMode="NoResize">
     <Window.Resources>
 
@@ -110,8 +111,25 @@
                     <DockPanel Grid.Column="0">
                         <TextBlock Style="{StaticResource SubHeader}" DockPanel.Dock="Top"
                                    Text="AVAILABLE HASH SETS" Margin="3,3,3,1"/>
-                        <ListView Margin="3,0,3,0">
-                            available hash sets go here
+                        <ListView Margin="3,0,3,0" ItemsSource="{Binding AvailableHashInfoGroups}"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding Name}" TextWrapping="Wrap" FontSize="9" FontWeight="Bold"/>
+                                        <TextBlock FontSize="8" TextWrapping="Wrap">
+                                            <Run Text="MD5:"/>
+                                            <Run Text="{Binding MD5s.Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                                            <Run Text="|"/>
+                                            <Run Text="SHA1:"/>
+                                            <Run Text="{Binding SHA1s.Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                                            <Run Text="|"/>
+                                            <Run Text="SHA256:"/>
+                                            <Run Text="{Binding SHA256s.Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
                         </ListView>
                     </DockPanel>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center">

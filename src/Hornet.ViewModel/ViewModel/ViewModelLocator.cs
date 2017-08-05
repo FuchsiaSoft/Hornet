@@ -45,13 +45,18 @@ namespace Hornet.ViewModel.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
         }
 
+        private MainViewModel _Main = new MainViewModel();
+
         public MainViewModel Main
         {
             get
             {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
+                return _Main;
             }
         }
+
+        //TODO: here we will create new viewmodel for popup windows and pass
+        //through delegate for main viewmodel refresh commands
         
         public static void Cleanup()
         {

@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Hornet"
              xmlns:conv="clr-namespace:Hornet.Converters"
+             xmlns:vm="clr-namespace:Hornet.ViewModel.ViewModel;assembly=Hornet.ViewModel"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <conv:InverseBooleanConverter x:Key="BoolInverter"/>
+        <vm:ViewModelLocator x:Key="Locator"/>
     </Application.Resources>
 </Application>
