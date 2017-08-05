@@ -1,12 +1,11 @@
-﻿using PdfSharp.Pdf;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using PdfSharp.Pdf.IO;
-using PdfSharp.Pdf.Content.Objects;
+using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
 
 namespace Hornet.IO.TextParsing.ContentReaders
 {
@@ -19,19 +18,18 @@ namespace Hornet.IO.TextParsing.ContentReaders
 
             try
             {
-                using (PdfDocument pdf = PdfReader.Open(fileStream))
+                using (PdfReader reader = new PdfReader(fileStream))
                 {
+                    ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
                     StringBuilder sb = new StringBuilder();
-                    foreach (PdfPage page in pdf.Pages)
+                    for (int i = 0; i < reader.NumberOfPages; i++)
                     {
-                        foreach (string subString in page.ExtractText())
-                        {
-                            sb.Append(subString);
-                        }
+                        sb.Append(PdfTextExtractor.GetTextFromPage(reader, i + 1, strategy));
                     }
                     result = sb.ToString();
                     return true;
                 }
+                
             }
             catch (Exception)
             {

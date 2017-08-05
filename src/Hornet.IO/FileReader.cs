@@ -70,10 +70,12 @@ namespace Hornet.IO
 
             IContentReader reader = null;
 
-            switch (Path.GetExtension(_filePath).ToUpper())
+            string extension = Path.GetExtension(_filePath.ToUpper());
+
+            switch (extension)
             {
                 case ".TXT":
-                    reader = new TextContentReader(_options.EncodingType);
+                    reader = new TextContentReader(EncodingType.AutoDetect);
                     break;
 
                 case ".PDF":
@@ -81,7 +83,13 @@ namespace Hornet.IO
                     break;
 
                 default:
-                    if (_options.AttemptTextDecode) reader = new TextContentReader(_options.EncodingType);
+                    if (_options.AttemptTextDecode)
+                    {
+                        if (!_options.ExcludedExtensionsForTextAttempt.Any(s=>s.ToUpper() == extension))
+                        {
+                            reader = new TextContentReader(_options.EncodingType);
+                        }
+                    }
                     break;
             }
 

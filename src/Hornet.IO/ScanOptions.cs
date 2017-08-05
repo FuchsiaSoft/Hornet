@@ -26,6 +26,16 @@ namespace Hornet.IO
         [JsonIgnore]
         public NetworkCredential Credentials { get; set; }
 
+        public bool RegexIncludePdf { get; set; } = false;
+        public bool RegexIncludeText { get; set; } = false;
+        public bool RegexIncludeMSG { get; set; } = false;
+        public bool RegexIncludeWord { get; set; } = false;
+        public bool RegexIncludeExcel { get; set; } = false;
+        public bool RegexIncludeHTML { get; set; } = false;
+
+        public bool HashIncludeJpegInPdf { get; set; } = false;
+
+        public IEnumerable<string> ExcludedExtensionsForTextAttempt { get; set; } = new string[0];
         /// <summary>
         /// The path to serve as root directory for the scan
         /// </summary>
