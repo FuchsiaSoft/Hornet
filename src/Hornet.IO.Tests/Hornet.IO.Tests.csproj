@@ -54,6 +54,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ContentTests\HtmlTests.cs" />
     <Compile Include="ContentTests\PdfTests.cs" />
     <Compile Include="ContentTests\TextTests.cs" />
     <Compile Include="HashTests.cs" />
@@ -61,6 +62,9 @@
     <Compile Include="TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestFiles\Html\Example.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="TestFiles\Text\ASCII_Example.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

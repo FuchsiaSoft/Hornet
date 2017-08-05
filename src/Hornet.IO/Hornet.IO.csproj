@@ -44,6 +44,10 @@
       <HintPath>..\packages\DotNetZip.1.10.1\lib\net20\DotNetZip.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.5.2.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.5.2-beta4\lib\Net45\HtmlAgilityPack.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="itextsharp, Version=5.5.11.0, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
       <HintPath>..\packages\iTextSharp.5.5.11\lib\itextsharp.dll</HintPath>
       <Private>True</Private>
@@ -118,6 +122,7 @@
     <Compile Include="TextParsing\ContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\BinaryWordDocContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\EmailContentReader.cs" />
+    <Compile Include="TextParsing\ContentReaders\HtmlContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\PdfContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\PdfSharpExtensions.cs" />
     <Compile Include="TextParsing\ContentReaders\TextContentReader.cs" />

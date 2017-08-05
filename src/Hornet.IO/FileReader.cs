@@ -82,6 +82,10 @@ namespace Hornet.IO
                     reader = new PdfContentReader();
                     break;
 
+                case ".HTML":
+                    reader = new HtmlContentReader();
+                    break;
+
                 default:
                     if (_options.AttemptTextDecode)
                     {
