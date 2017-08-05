@@ -114,6 +114,8 @@
     <Compile Include="TextParsing\ContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\BinaryWordDocContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\EmailContentReader.cs" />
+    <Compile Include="TextParsing\ContentReaders\PdfContentReader.cs" />
+    <Compile Include="TextParsing\ContentReaders\PdfSharpExtensions.cs" />
     <Compile Include="TextParsing\ContentReaders\TextContentReader.cs" />
     <Compile Include="TextParsing\ContentReaders\ZipContentReader.cs" />
     <Compile Include="TextParsing\EncodingType.cs" />

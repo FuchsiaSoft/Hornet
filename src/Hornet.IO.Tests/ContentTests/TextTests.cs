@@ -17,79 +17,78 @@ namespace Hornet.IO.Tests.ContentTests
     [TestClass]
     public class TextTests
     {
-        private static Regex _knownSingleMatchPattern = new Regex("(?i)(conversation on political matters)");
-        private static Regex _knownMultiMatchPattern = new Regex("Austria");
+        
 
         [TestMethod]
-        public void ASCII_Test_Single_Match()
+        public void ASCII_Test_Match()
         {
             string path = "TestFiles/Text/ASCII_Example.txt";
             ScanOptions options = new ScanOptions() { EncodingType = EncodingType.ASCII };
             FileReader reader = new FileReader(path, options, false, false, false, true);
             FileResult result = reader.GetResult();
 
-            Assert.IsTrue(_knownSingleMatchPattern.Matches(result.Content).Count == 1);
-            Assert.IsTrue(_knownMultiMatchPattern.Matches(result.Content).Count > 1);
+            Assert.IsTrue(TestUtil.KnownSingleMatchPattern.Matches(result.Content).Count == 1);
+            Assert.IsTrue(TestUtil.KnownMultiMatchPattern.Matches(result.Content).Count > 1);
         }
 
         [TestMethod]
-        public void Unicode_Test_Single_Match()
+        public void Unicode_Test_Match()
         {
             string path = "TestFiles/Text/Unicode_Example.txt";
             ScanOptions options = new ScanOptions() { EncodingType = EncodingType.Unicode };
             FileReader reader = new FileReader(path, options, false, false, false, true);
             FileResult result = reader.GetResult();
 
-            Assert.IsTrue(_knownSingleMatchPattern.Matches(result.Content).Count == 1);
-            Assert.IsTrue(_knownMultiMatchPattern.Matches(result.Content).Count > 1);
+            Assert.IsTrue(TestUtil.KnownSingleMatchPattern.Matches(result.Content).Count == 1);
+            Assert.IsTrue(TestUtil.KnownMultiMatchPattern.Matches(result.Content).Count > 1);
         }
 
         [TestMethod]
-        public void UnicodeBE_Test_Single_Match()
+        public void UnicodeBE_Test_Match()
         {
             string path = "TestFiles/Text/UnicodeBE_Example.txt";
             ScanOptions options = new ScanOptions() { EncodingType = EncodingType.UnicodeBigEndian };
             FileReader reader = new FileReader(path, options, false, false, false, true);
             FileResult result = reader.GetResult();
 
-            Assert.IsTrue(_knownSingleMatchPattern.Matches(result.Content).Count == 1);
-            Assert.IsTrue(_knownMultiMatchPattern.Matches(result.Content).Count > 1);
+            Assert.IsTrue(TestUtil.KnownSingleMatchPattern.Matches(result.Content).Count == 1);
+            Assert.IsTrue(TestUtil.KnownMultiMatchPattern.Matches(result.Content).Count > 1);
         }
 
         [TestMethod]
-        public void UTF32_Test_Single_Match()
+        public void UTF32_Test_Match()
         {
             string path = "TestFiles/Text/UTF32_Example.txt";
             ScanOptions options = new ScanOptions() { EncodingType = EncodingType.UTF32 };
             FileReader reader = new FileReader(path, options, false, false, false, true);
             FileResult result = reader.GetResult();
 
-            Assert.IsTrue(_knownSingleMatchPattern.Matches(result.Content).Count == 1);
-            Assert.IsTrue(_knownMultiMatchPattern.Matches(result.Content).Count > 1);
+            Assert.IsTrue(TestUtil.KnownSingleMatchPattern.Matches(result.Content).Count == 1);
+            Assert.IsTrue(TestUtil.KnownMultiMatchPattern.Matches(result.Content).Count > 1);
         }
 
         [TestMethod]
-        public void UTF7_Test_Single_Match()
+        public void UTF7_Test_Match()
         {
             string path = "TestFiles/Text/UTF7_Example.txt";
             ScanOptions options = new ScanOptions() { EncodingType = EncodingType.UTF7 };
             FileReader reader = new FileReader(path, options, false, false, false, true);
             FileResult result = reader.GetResult();
 
-            Assert.IsTrue(_knownSingleMatchPattern.Matches(result.Content).Count == 1);
-            Assert.IsTrue(_knownMultiMatchPattern.Matches(result.Content).Count > 1);
+            Assert.IsTrue(TestUtil.KnownSingleMatchPattern.Matches(result.Content).Count == 1);
+            Assert.IsTrue(TestUtil.KnownMultiMatchPattern.Matches(result.Content).Count > 1);
         }
 
         [TestMethod]
-        public void UTF8_Test_Single_Match()
+        public void UTF8_Test_Match()
         {
             string path = "TestFiles/Text/UTF8_Example.txt";
             ScanOptions options = new ScanOptions() { EncodingType = EncodingType.UTF8 };
             FileReader reader = new FileReader(path, options, false, false, false, true);
             FileResult result = reader.GetResult();
 
-            Assert.IsTrue(_knownSingleMatchPattern.Matches(result.Content).Count == 1);
-            Assert.IsTrue(_knownMultiMatchPattern.Matches(result.Content).Count > 1);
+            Assert.IsTrue(TestUtil.KnownSingleMatchPattern.Matches(result.Content).Count == 1);
+            Assert.IsTrue(TestUtil.KnownMultiMatchPattern.Matches(result.Content).Count > 1);
         }
     }
 }

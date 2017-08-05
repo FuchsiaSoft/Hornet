@@ -54,9 +54,11 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="ContentTests\PdfTests.cs" />
     <Compile Include="ContentTests\TextTests.cs" />
     <Compile Include="HashTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestFiles\Text\ASCII_Example.txt">
@@ -92,6 +94,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestFiles\HashOutputSampleFile.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestFiles\Pdf\PDF_14_Example.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="TestFiles\Pdf\PDF_17_Example.pdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

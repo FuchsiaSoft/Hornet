@@ -76,6 +76,10 @@ namespace Hornet.IO
                     reader = new TextContentReader(_options.EncodingType);
                     break;
 
+                case ".PDF":
+                    reader = new PdfContentReader();
+                    break;
+
                 default:
                     if (_options.AttemptTextDecode) reader = new TextContentReader(_options.EncodingType);
                     break;
