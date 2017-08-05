@@ -8,5 +8,75 @@
     <Application.Resources>
         <conv:InverseBooleanConverter x:Key="BoolInverter"/>
         <vm:ViewModelLocator x:Key="Locator"/>
+
+        <DataTemplate x:Key="HashGroupTemplate">
+            <StackPanel>
+                <TextBlock Text="{Binding Name}" TextWrapping="Wrap" FontSize="9" FontWeight="Bold"/>
+                <TextBlock FontSize="9" TextWrapping="Wrap" FontWeight="Light">
+                                            <Run Text="MD5:"/>
+                                            <Run Text="{Binding MD5s.Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                                            <Run Text="|"/>
+                                            <Run Text="SHA1:"/>
+                                            <Run Text="{Binding SHA1s.Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                                            <Run Text="|"/>
+                                            <Run Text="SHA256:"/>
+                                            <Run Text="{Binding SHA256s.Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                </TextBlock>
+            </StackPanel>
+        </DataTemplate>
+        <Style TargetType="TextBlock" x:Key="Header">
+            <Setter Property="FontWeight" Value="ExtraBold"/>
+            <Setter Property="Foreground" Value="Black"/>
+        </Style>
+        <Style TargetType="Border" x:Key="HeaderBorder">
+            <Setter Property="Background">
+                <Setter.Value>
+                    <LinearGradientBrush>
+                        <GradientStop Color="Gold" Offset="0.0"/>
+                        <GradientStop Color="White" Offset="0.85"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="CornerRadius" Value="3"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="SubHeader">
+            <Setter Property="FontSize" Value="8"/>
+            <Setter Property="FontWeight" Value="ExtraBold"/>
+        </Style>
+        <Style TargetType="GroupBox">
+            <Setter Property="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" Style="{StaticResource SubHeader}"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="RadioButton">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="Label">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="DarkGray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Application.Resources>
 </Application>

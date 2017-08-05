@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,19 +17,18 @@ using System.Windows.Shapes;
 namespace Hornet
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for About.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class About : Window
     {
-        public MainWindow()
+        public About()
         {
             InitializeComponent();
         }
 
-        private void menuAbout_Click(object sender, RoutedEventArgs e)
+        private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
         {
-            About aboutWindow = new About();
-            aboutWindow.ShowDialog();
+            Process.Start(e.Uri.ToString());
         }
     }
 }

@@ -92,7 +92,7 @@ namespace Hornet.ViewModel.ViewModel
         {
             HashInfoGroup hashGroup = new HashInfoGroup()
             {
-                Name = "Example Hash Group 1, name goes here",
+                Name = "An Example Hash Group, name goes here",
                 Description = "This is an example hash group, its full description would go here"
             };
 
