@@ -10,9 +10,6 @@
         DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
         ResizeMode="NoResize"
         Background="White">
-    <Window.Resources>
-        
-    </Window.Resources>
 
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="White">

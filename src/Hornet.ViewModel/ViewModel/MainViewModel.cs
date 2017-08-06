@@ -74,7 +74,8 @@ namespace Hornet.ViewModel.ViewModel
         public MainViewModel()
         {
             if (IsInDesignMode) AddDesignTimeData();
-            
+            //TEMP remove this
+            AddDesignTimeData();
         }
 
         private void AddDesignTimeData()
