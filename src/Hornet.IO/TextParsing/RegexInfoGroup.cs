@@ -10,7 +10,7 @@ namespace Hornet.IO.TextParsing
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public IList<RegexInfo> RegexInfos { get; set; }
-        public IList<RegexResult> Matches { get; set; }
+        public List<RegexInfo> RegexInfos { get; set; }
+        public List<RegexResult> Matches { get; set; }
     }
 }

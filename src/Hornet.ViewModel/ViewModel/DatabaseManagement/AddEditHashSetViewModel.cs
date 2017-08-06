@@ -1,4 +1,6 @@
-﻿using Hornet.Model;
+﻿using GalaSoft.MvvmLight.CommandWpf;
+using Hornet.IO.FileManagement;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,10 +8,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 
 namespace Hornet.ViewModel.ViewModel.DatabaseManagement
 {
-    public class AddEditHashSetViewModel : DataEntryViewModelBase<HashGroup>
+    public class AddEditHashSetViewModel : WindowCreatingViewModel
     {
         #region Binding Properties
 
@@ -38,9 +41,9 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
         }
 
 
-        private ObservableCollection<MD5> _MD5s = new ObservableCollection<MD5>();
+        private ObservableCollection<HashInfo> _MD5s = new ObservableCollection<HashInfo>();
 
-        public ObservableCollection<MD5> MD5s
+        public ObservableCollection<HashInfo> MD5s
         {
             get { return _MD5s; }
             set
@@ -50,9 +53,9 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
             }
         }
 
-        private ObservableCollection<SHA1> _SHA1s = new ObservableCollection<SHA1>();
+        private ObservableCollection<HashInfo> _SHA1s = new ObservableCollection<HashInfo>();
 
-        public ObservableCollection<SHA1> SHA1s
+        public ObservableCollection<HashInfo> SHA1s
         {
             get { return _SHA1s; }
             set
@@ -62,9 +65,9 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
             }
         }
 
-        private ObservableCollection<SHA256> _SHA256s = new ObservableCollection<SHA256>();
+        private ObservableCollection<HashInfo> _SHA256s = new ObservableCollection<HashInfo>();
 
-        public ObservableCollection<SHA256> SHA256s
+        public ObservableCollection<HashInfo> SHA256s
         {
             get { return _SHA256s; }
             set
@@ -76,132 +79,63 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
 
         #endregion
 
-        public AddEditHashSetViewModel(HashGroup entity, DataEntryMode mode = DataEntryMode.New, Action exitAction = null) : 
-            base(entity, mode, exitAction)
-        {
-            if (mode == DataEntryMode.New)
-            {
-                WindowTitle = "Add new hash set";
-            }
-            else
-            {
-                WindowTitle = "Edit hash set";
-            }
-        }
+        public ICommand CancelCommand { get { return new RelayCommand(CloseWindow); } }
 
-        protected override bool CanCancel(Window window)
-        {
-            return true; //can always cancel this one
-        }
+        public ICommand SaveCommand { get { return new RelayCommand(Save); } }
 
-        protected override bool CanSave(Window window)
+        private async void Save()
         {
-            return (MD5s.Count > 0 || SHA1s.Count > 0 || SHA256s.Count > 0);
-        }
-
-        protected override Task LoadExisting()
-        {
-            return Task.Run(() =>
+            SaveFileDialog dlg = new SaveFileDialog();
+            dlg.OverwritePrompt = true;
+            dlg.AddExtension = true;
+            dlg.DefaultExt = ".hg";
+            if (dlg.ShowDialog() == true)
             {
-                try
+                MarkBusy("Saving file...");
+                await Task.Run(() =>
                 {
-                    using (HornetModelContainer db = new HornetModelContainer())
+                    try
                     {
-                        HashGroup group = db.HashGroups.Find(_entity.Id);
-
-                        IEnumerable<MD5> md5s = group.HashEntries.OfType<MD5>().ToList();
-                        IEnumerable<SHA1> sha1s = group.HashEntries.OfType<SHA1>().ToList();
-                        IEnumerable<SHA256> sha256s = group.HashEntries.OfType<SHA256>().ToList();
-
-                        MD5s = new ObservableCollection<MD5>(md5s);
-                        SHA1s = new ObservableCollection<SHA1>(sha1s);
-                        SHA256s = new ObservableCollection<SHA256>(sha256s);
-                    }
-                }
-                catch (Exception)
-                {
-                    ErrorMessage = "Could not save record to database";
-                }
-            });
-            
-        }
-
-        protected override Task LoadNew()
-        {
-            return Task.FromResult(0); //nothing to see here
-        }
-
-        protected override Task SaveExisting()
-        {
-            return Task.Run(() =>
-            {
-                try
-                {
-                    using (HornetModelContainer db = new HornetModelContainer())
-                    {
-                        HashGroup group = db.HashGroups.Find(_entity.Id);
-
-                        group.HashEntries.Clear();
-
-                        foreach (MD5 md5 in MD5s)
+                        HashInfoGroup group = new HashInfoGroup();
+                        if (string.IsNullOrWhiteSpace(Name))
                         {
-                            group.HashEntries.Add(md5);
+                            group.Name = "Un-named hash set";
+                        }
+                        else
+                        {
+                            group.Name = Name;
                         }
 
-                        foreach (SHA1 sha1 in SHA1s)
+                        foreach (var md5 in MD5s)
                         {
-                            group.HashEntries.Add(sha1);
-                        }
-
-                        foreach (SHA256 sha256 in SHA256s)
-                        {
-                            group.HashEntries.Add(sha256);
-                        }
-
-                        db.SaveChanges();
-                    }
-                }
-                catch (Exception)
-                {
-                    ErrorMessage = "Could not save record to database";
-                }
-            });
-        }
-
-        protected override Task SaveNew()
-        {
-            return Task.Run(() =>
-            {
-                try
-                {
-                    using (HornetModelContainer db = new HornetModelContainer())
-                    {
-                        HashGroup group = new HashGroup();
-                        
-                        foreach (MD5 md5 in MD5s)
-                        {
+                            md5.HashType = HashType.MD5;
                             group.MD5s.Add(md5);
                         }
 
-                        foreach (SHA1 sha1 in SHA1s)
+                        foreach (var sha1 in SHA1s)
                         {
-                            group.HashEntries.Add(sha1);
+                            sha1.HashType = HashType.SHA1;
+                            group.SHA1s.Add(sha1);
                         }
 
-                        foreach (SHA256 sha256 in SHA256s)
+                        foreach (var sha256 in SHA256s)
                         {
-                            group.HashEntries.Add(sha256);
+                            sha256.HashType = HashType.SHA256;
+                            group.SHA256s.Add(sha256);
                         }
 
-                        db.HashGroups.Add(group);
-                        db.SaveChanges();
+                        //TODO: pick up here, saving a hg file!
                     }
-                }
-                catch (Exception)
-                {
-                    ErrorMessage = "Could not save record to database";
-                }
-            });
+                    catch (Exception)
+                    {
+                        ErrorMessage = "Could not save file";
+                    }
+                    
+                });
+                MarkFree();
+                
+                
+            }
         }
     }
 }

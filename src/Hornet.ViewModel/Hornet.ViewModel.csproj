@@ -84,7 +84,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\DatabaseManagement\AddEditHashSetViewModel.cs" />
-    <Compile Include="ViewModel\DatabaseManagement\DataEntryViewModelBase%28T%29.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\WindowCreatingViewModel.cs" />
@@ -94,10 +93,6 @@
     <ProjectReference Include="..\Hornet.IO\Hornet.IO.csproj">
       <Project>{dcbcbc08-76a1-4b6d-9d8e-404d50e2a69a}</Project>
       <Name>Hornet.IO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Hornet.Model\Hornet.Model.csproj">
-      <Project>{3a67f967-939c-4b78-8812-993b672d8e43}</Project>
-      <Name>Hornet.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

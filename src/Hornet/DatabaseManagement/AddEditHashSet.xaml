@@ -18,11 +18,12 @@
                 <TextBox Text="{Binding Description}" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" Height="80"/>
             </DockPanel>
             <DockPanel DockPanel.Dock="Bottom">
-                <Button Content="Cancel" DockPanel.Dock="Right" Width="80" Margin="3" Command="{Binding CancelCommand}"/>
-                <Button Content="Save" DockPanel.Dock="Right" Width="80" Margin="3" Command="{Binding SaveCommand}"/>
+                <Button Content="Cancel" DockPanel.Dock="Right" Width="80" Margin="3" Command="{Binding CancelCommand}" IsEnabled="{Binding EnableControls}"/>
+                <Button Content="Save" DockPanel.Dock="Right" Width="80" Margin="3" Command="{Binding SaveCommand}" IsEnabled="{Binding EnableControls}"/>
+                <TextBlock Text="{Binding BusyMessage, FallbackValue='Busy message here...'}" Width="200" DockPanel.Dock="Left" VerticalAlignment="Center" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
                 <ProgressBar Height="10" Margin="10,0,10,0" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
             </DockPanel>
-            <Grid>
+            <Grid IsEnabled="{Binding EnableControls}">
                 <Grid.RowDefinitions>
                     <RowDefinition/>
                     <RowDefinition/>

@@ -142,10 +142,6 @@
     <None Include="Resources\logo_UNf_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Hornet.Model\Hornet.Model.csproj">
-      <Project>{3a67f967-939c-4b78-8812-993b672d8e43}</Project>
-      <Name>Hornet.Model</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Hornet.ViewModel\Hornet.ViewModel.csproj">
       <Project>{a6aacb15-1b9a-4c35-9971-28d9c72bb610}</Project>
       <Name>Hornet.ViewModel</Name>

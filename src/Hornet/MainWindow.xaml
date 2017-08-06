@@ -14,21 +14,21 @@
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="White">
             <MenuItem Header="File">
-                <MenuItem Header="Open scan definition" InputGestureText="Ctrl+O"/>
+                <MenuItem Header="New">
+                    <MenuItem Header="New hash set definition" Command="{Binding AddNewHashSetCommand}"/>
+                    <MenuItem Header="New regular expression set definition"/>
+                </MenuItem>
+                <MenuItem Header="Open">
+                    <MenuItem Header="Open scan definition" InputGestureText="Ctrl+O"/>
+                    <Separator/>
+                    <MenuItem Header="Open hash set definition"/>
+                    <MenuItem Header="Open regular expression set definition"/>
+                </MenuItem>
+                
                 <MenuItem Header="Save current scan definition" InputGestureText="Ctrl+S"/>
                 <MenuItem Header="Save current scan definition (secure)" InputGestureText="Ctrl+Shift+S"/>
                 <Separator/>
                 <MenuItem Header="Exit"/>
-            </MenuItem>
-            <MenuItem Header="Database">
-                <MenuItem Header="Hash sets">
-                    <MenuItem Header="New hash set" Command="{Binding AddNewHashSetCommand}"/>
-                    <MenuItem Header="Manage existing hash set"/>
-                </MenuItem>
-                <MenuItem Header="Regular expression groups">
-                    <MenuItem Header="New regular expression group"/>
-                    <MenuItem Header="Manage existing regular expression groups"/>
-                </MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="User guide" InputGestureText="F1"/>
@@ -64,43 +64,14 @@
                             <TextBlock Style="{StaticResource Header}" Text="HASH SETS" Margin="5,3,5,3"/>
                         </StackPanel>
                     </Border>
-
-                    <Grid DockPanel.Dock="Top">
-                        <TextBox Margin="3"/>
-                        <Path Fill="SlateGray" HorizontalAlignment="Right"
-                          Stretch="Uniform" Margin="3,3,5,3" Height="10"
-                          Data="F1 M 42.5,22C 49.4036,22 55,27.5964 55,34.5C 55,41.4036 49.4036,47 42.5,47C 40.1356,47 37.9245,46.3435 36,45.2426L 26.9749,54.2678C 25.8033,55.4393 23.9038,55.4393 22.7322,54.2678C 21.5607,53.0962 21.5607,51.1967 22.7322,50.0251L 31.7971,40.961C 30.6565,39.0755 30,36.8644 30,34.5C 30,27.5964 35.5964,22 42.5,22 Z M 42.5,26C 37.8056,26 34,29.8056 34,34.5C 34,39.1944 37.8056,43 42.5,43C 47.1944,43 51,39.1944 51,34.5C 51,29.8056 47.1944,26 42.5,26 Z"/>
-                    </Grid>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="40"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <DockPanel Grid.Column="0">
-                            <TextBlock Style="{StaticResource SubHeader}" DockPanel.Dock="Top"
-                                   Text="AVAILABLE HASH SETS" Margin="3,3,3,1"/>
-                            <ListView Margin="3,0,3,0" ItemsSource="{Binding AvailableHashGroups}"
-                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                                  ItemTemplate="{StaticResource HashGroupTemplate}">
-                            </ListView>
-                        </DockPanel>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <Button Content="&gt;" Margin="0,0,0,3"/>
-                            <Button Content="&gt;&gt;" Margin="0,0,0,5"/>
-                            <Separator Margin="2"/>
-                            <Button Content="&lt;" Margin="0,5,0,3"/>
-                            <Button Content="&lt;&lt;"/>
-                        </StackPanel>
-                        <DockPanel Grid.Column="2">
-                            <TextBlock Style="{StaticResource SubHeader}" DockPanel.Dock="Top"
+                    <DockPanel Grid.Column="0">
+                        <TextBlock Style="{StaticResource SubHeader}" DockPanel.Dock="Top"
                                    Text="SELECTED HASH SETS" Margin="3,3,3,1"/>
-                            <ListView Margin="3,0,3,0" ItemsSource="{Binding SelectedHashGroups}"
+                        <ListView Margin="3,0,3,0" ItemsSource="{Binding AvailableHashGroups}"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                   ItemTemplate="{StaticResource HashGroupTemplate}">
-                            </ListView>
-                        </DockPanel>
-                    </Grid>
+                        </ListView>
+                    </DockPanel>
                 </DockPanel>
                 <Separator Grid.Row="3" Margin="10,0,10,0" VerticalAlignment="Center"/>
                 <DockPanel Grid.Row="2">
@@ -112,42 +83,13 @@
                             <TextBlock Style="{StaticResource Header}" Text="REGULAR EXPRESSION SETS" Margin="5,3,5,3"/>
                         </StackPanel>
                     </Border>
-
-                    <Grid DockPanel.Dock="Top">
-                        <TextBox Margin="3"/>
-                        <Path Fill="SlateGray" HorizontalAlignment="Right"
-                          Stretch="Uniform" Margin="3,3,5,3" Height="10"
-                          Data="F1 M 42.5,22C 49.4036,22 55,27.5964 55,34.5C 55,41.4036 49.4036,47 42.5,47C 40.1356,47 37.9245,46.3435 36,45.2426L 26.9749,54.2678C 25.8033,55.4393 23.9038,55.4393 22.7322,54.2678C 21.5607,53.0962 21.5607,51.1967 22.7322,50.0251L 31.7971,40.961C 30.6565,39.0755 30,36.8644 30,34.5C 30,27.5964 35.5964,22 42.5,22 Z M 42.5,26C 37.8056,26 34,29.8056 34,34.5C 34,39.1944 37.8056,43 42.5,43C 47.1944,43 51,39.1944 51,34.5C 51,29.8056 47.1944,26 42.5,26 Z"/>
-                    </Grid>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition/>
-                            <ColumnDefinition Width="40"/>
-                            <ColumnDefinition/>
-                        </Grid.ColumnDefinitions>
-                        <DockPanel Grid.Column="0">
-                            <TextBlock Style="{StaticResource SubHeader}" DockPanel.Dock="Top"
+                    <DockPanel Grid.Column="0">
+                        <TextBlock Style="{StaticResource SubHeader}" DockPanel.Dock="Top"
                                    Text="AVAILABLE REGULAR EXPRESSION SETS" Margin="3,3,3,1"/>
-                            <ListView Margin="3,0,3,0">
-                                available regex sets go here
-                            </ListView>
-                        </DockPanel>
-                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                            <Button Content="&gt;" Margin="0,0,0,3"/>
-                            <Button Content="&gt;&gt;" Margin="0,0,0,5"/>
-                            <Separator Margin="2"/>
-                            <Button Content="&lt;" Margin="0,5,0,3"/>
-                            <Button Content="&lt;&lt;"/>
-                        </StackPanel>
-                        <DockPanel Grid.Column="2">
-                            <TextBlock Style="{StaticResource SubHeader}" DockPanel.Dock="Top"
-                                   Text="SELECTED REGULAR EXPRESSION SETS" Margin="3,3,3,1"/>
-                            <ListView Margin="3,0,3,0">
-                                selected regex sets go here
-                            </ListView>
-                        </DockPanel>
-
-                    </Grid>
+                        <ListView Margin="3,0,3,0">
+                            available regex sets go here
+                        </ListView>
+                    </DockPanel>
                 </DockPanel>
                 <DockPanel Grid.Row="4">
                     <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
