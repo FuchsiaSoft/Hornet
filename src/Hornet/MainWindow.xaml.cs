@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hornet.DatabaseManagement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,6 +30,12 @@ namespace Hornet
         {
             About aboutWindow = new About();
             aboutWindow.ShowDialog();
+        }
+
+        private void menuNewHash_Click(object sender, RoutedEventArgs e)
+        {
+            AddEditHashSet addWindow = new AddEditHashSet();
+            addWindow.ShowDialog();
         }
     }
 }

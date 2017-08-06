@@ -100,6 +100,7 @@
     <Compile Include="MD5.cs">
       <DependentUpon>HornetModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="PartialClassExtensions\HashGroup.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegexEntry.cs">
       <DependentUpon>HornetModel.tt</DependentUpon>
@@ -127,10 +128,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="HornetConfigDatabase.mdf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="HornetConfigDatabase_log.ldf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <DependentUpon>HornetConfigDatabase.mdf</DependentUpon>
     </Content>
     <Content Include="HornetModel.Context.tt">

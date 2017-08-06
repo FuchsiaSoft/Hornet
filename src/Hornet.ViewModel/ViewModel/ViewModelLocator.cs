@@ -14,6 +14,7 @@
 
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
+using Hornet.ViewModel.ViewModel.DatabaseManagement;
 using Microsoft.Practices.ServiceLocation;
 
 namespace Hornet.ViewModel.ViewModel
@@ -45,13 +46,21 @@ namespace Hornet.ViewModel.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
         }
 
-        private MainViewModel _Main = new MainViewModel();
+        private static MainViewModel _Main = new MainViewModel(); //only ever one of this
 
         public MainViewModel Main
         {
             get
             {
                 return _Main;
+            }
+        }
+
+        public AddEditHashSetViewModel AddHashSet
+        {
+            get
+            {
+                return new AddEditHashSetViewModel(null, DataEntryMode.New, new System.Action(_Main.LoadHashGroups));
             }
         }
 

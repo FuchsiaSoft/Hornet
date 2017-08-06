@@ -6,64 +6,83 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
+using Hornet.Model;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Data.Entity;
 
 namespace Hornet.ViewModel.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
         #region Binding Properties
-        private ObservableCollection<HashInfoGroup> _AvailableHashInfoGroups 
-            = new ObservableCollection<HashInfoGroup>();
 
-        public ObservableCollection<HashInfoGroup> AvailableHashInfoGroups
+        //TODO: bind this somewhere in the main view
+        private string _ErrorMessage;
+
+        public string ErrorMessage
         {
-            get { return _AvailableHashInfoGroups; }
+            get { return _ErrorMessage; }
             set
             {
-                _AvailableHashInfoGroups = value;
-                RaisePropertyChanged("AvailableHashInfoGroups");
+                _ErrorMessage = value;
+                RaisePropertyChanged("ErrorMessage");
             }
         }
 
 
-        private ObservableCollection<HashInfoGroup> _SelectedHashInfoGroups
-            = new ObservableCollection<HashInfoGroup>();
+        private ObservableCollection<HashGroup> _AvailableHashGroups
+            = new ObservableCollection<HashGroup>();
 
-        public ObservableCollection<HashInfoGroup> SelectedHashInfoGroups
+        public ObservableCollection<HashGroup> AvailableHashGroups
         {
-            get { return _SelectedHashInfoGroups; }
+            get { return _AvailableHashGroups; }
             set
             {
-                _SelectedHashInfoGroups = value;
-                RaisePropertyChanged("SelectedHashInfoGroups");
+                _AvailableHashGroups = value;
+                RaisePropertyChanged("AvailableHashGroups");
             }
         }
 
 
-        private ObservableCollection<RegexInfoGroup> _AvailableRegexInfoGroups
-            = new ObservableCollection<RegexInfoGroup>();
+        private ObservableCollection<HashGroup> _SelectedHashGroups
+            = new ObservableCollection<HashGroup>();
 
-        public ObservableCollection<RegexInfoGroup> AvailableRegexInfoGroups
+        public ObservableCollection<HashGroup> SelectedHashGroups
         {
-            get { return _AvailableRegexInfoGroups; }
+            get { return _SelectedHashGroups; }
             set
             {
-                _AvailableRegexInfoGroups = value;
-                RaisePropertyChanged("AvailableRegexInfoGroups");
+                _SelectedHashGroups = value;
+                RaisePropertyChanged("SelectedHashGroups");
             }
         }
 
 
-        private ObservableCollection<RegexInfoGroup> _SelectedRegexInfoGroups 
-            = new ObservableCollection<RegexInfoGroup>();
+        private ObservableCollection<RegexGroup> _AvailableRegexGroups
+            = new ObservableCollection<RegexGroup>();
 
-        public ObservableCollection<RegexInfoGroup> SelectedRegexInfoGroups
+        public ObservableCollection<RegexGroup> AvailableRegexGroups
         {
-            get { return _SelectedRegexInfoGroups; }
+            get { return _AvailableRegexGroups; }
             set
             {
-                _SelectedRegexInfoGroups = value;
-                RaisePropertyChanged("SelectedRegexInfoGroups");
+                _AvailableRegexGroups = value;
+                RaisePropertyChanged("AvailableRegexGroups");
+            }
+        }
+
+
+        private ObservableCollection<RegexGroup> _SelectedRegexGroups
+            = new ObservableCollection<RegexGroup>();
+
+        public ObservableCollection<RegexGroup> SelectedRegexGroups
+        {
+            get { return _SelectedRegexGroups; }
+            set
+            {
+                _SelectedRegexGroups = value;
+                RaisePropertyChanged("SelectedRegexGroups");
             }
         }
 
@@ -74,24 +93,83 @@ namespace Hornet.ViewModel.ViewModel
         public MainViewModel()
         {
             if (IsInDesignMode) AddDesignTimeData();
-            //TEMP remove this
-            AddDesignTimeData();
+
+            LoadData();
+        }
+
+        private void LoadData()
+        {
+            LoadHashGroups();
+
+            LoadRegexGroups();
+        }
+
+        private async void LoadRegexGroups()
+        {
+            await Task.Run(() =>
+            {
+                try
+                {
+                    using (HornetModelContainer db = new HornetModelContainer())
+                    {
+
+                    }
+                }
+                catch (Exception)
+                {
+                    ErrorMessage = "Could not load data";
+                }
+            });
+        }
+
+        public async void LoadHashGroups()
+        {
+            List<HashGroup> groups = new List<HashGroup>();
+            List<HashGroup> selectedGroups = new List<HashGroup>();
+
+            await Task.Run(() =>
+            {
+                try
+                {
+                    using (HornetModelContainer db = new HornetModelContainer())
+                    {
+                        groups = db.HashGroups.ToList();
+
+                        IEnumerable<int> previouslySelectedIDs = SelectedHashGroups.Select(g => g.Id);
+
+                        IEnumerable<HashGroup> groupsToMove = groups.Where(g => previouslySelectedIDs.Contains(g.Id));
+
+                        foreach (HashGroup group in groupsToMove)
+                        {
+                            selectedGroups.Add(group);
+                            groups.Remove(group);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    ErrorMessage = "Could not load data";
+                }
+            });
+
+            AvailableHashGroups = new ObservableCollection<HashGroup>(groups);
+            SelectedHashGroups = new ObservableCollection<HashGroup>(selectedGroups);
         }
 
         private void AddDesignTimeData()
         {
-            AvailableHashInfoGroups.Add(GetRandomHashGroup());
-            AvailableHashInfoGroups.Add(GetRandomHashGroup());
-            AvailableHashInfoGroups.Add(GetRandomHashGroup());
+            AvailableHashGroups.Add(GetRandomHashGroup());
+            AvailableHashGroups.Add(GetRandomHashGroup());
+            AvailableHashGroups.Add(GetRandomHashGroup());
 
-            SelectedHashInfoGroups.Add(GetRandomHashGroup());
+            SelectedHashGroups.Add(GetRandomHashGroup());
         }
 
         private static Random _random = new Random();
 
-        private HashInfoGroup GetRandomHashGroup()
+        private HashGroup GetRandomHashGroup()
         {
-            HashInfoGroup hashGroup = new HashInfoGroup()
+            HashGroup hashGroup = new HashGroup()
             {
                 Name = "An Example Hash Group, name goes here",
                 Description = "This is an example hash group, its full description would go here"
@@ -100,10 +178,9 @@ namespace Hornet.ViewModel.ViewModel
             int md5Count = _random.Next(3000);
             for (int i = 0; i < md5Count; i++)
             {
-                hashGroup.MD5s.Add(new HashInfo()
+                hashGroup.HashEntries.Add(new Hornet.Model.MD5()
                 {
-                    Hash = GetRandomMD5(),
-                    HashType = HashType.MD5,
+                    HashValue = GetRandomMD5(),
                     Remarks = "remarks go here about the file that made this hash"
                 });
             }
@@ -111,10 +188,9 @@ namespace Hornet.ViewModel.ViewModel
             int sha1Count = _random.Next(2000);
             for (int i = 0; i < sha1Count; i++)
             {
-                hashGroup.SHA1s.Add(new HashInfo()
+                hashGroup.HashEntries.Add(new Hornet.Model.SHA1()
                 {
-                    Hash = GetRandomSHA1(),
-                    HashType = HashType.SHA1,
+                    HashValue = GetRandomSHA1(),
                     Remarks = "remarks go here about the file that made this hash"
                 });
             }
@@ -122,10 +198,9 @@ namespace Hornet.ViewModel.ViewModel
             int sha256Count = _random.Next(1000);
             for (int i = 0; i < sha256Count; i++)
             {
-                hashGroup.SHA256s.Add(new HashInfo()
+                hashGroup.HashEntries.Add(new Hornet.Model.SHA256()
                 {
-                    Hash = GetRandomSHA256(),
-                    HashType = HashType.SHA256,
+                    HashValue = GetRandomSHA256(),
                     Remarks = "remarks go here about the file that made this hash"
                 });
             }
@@ -133,12 +208,12 @@ namespace Hornet.ViewModel.ViewModel
             return hashGroup;
         }
 
-        
+
         private static string GetRandomMD5()
         {
             byte[] buffer = new byte[10];
             _random.NextBytes(buffer);
-            using (MD5 md5 = MD5.Create())
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
             {
                 byte[] hash = md5.ComputeHash(buffer);
                 StringBuilder sb = new StringBuilder();
@@ -154,7 +229,7 @@ namespace Hornet.ViewModel.ViewModel
         {
             byte[] buffer = new byte[10];
             _random.NextBytes(buffer);
-            using (SHA1 sha1 = SHA1.Create())
+            using (System.Security.Cryptography.SHA1 sha1 = System.Security.Cryptography.SHA1.Create())
             {
                 byte[] hash = sha1.ComputeHash(buffer);
                 StringBuilder sb = new StringBuilder();
@@ -170,7 +245,7 @@ namespace Hornet.ViewModel.ViewModel
         {
             byte[] buffer = new byte[10];
             _random.NextBytes(buffer);
-            using (SHA256 sha256 = SHA256.Create())
+            using (System.Security.Cryptography.SHA256 sha256 = System.Security.Cryptography.SHA256.Create())
             {
                 byte[] hash = sha256.ComputeHash(buffer);
                 StringBuilder sb = new StringBuilder();

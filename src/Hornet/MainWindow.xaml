@@ -21,8 +21,14 @@
                 <MenuItem Header="Exit"/>
             </MenuItem>
             <MenuItem Header="Database">
-                <MenuItem Header="Manage hash sets"/>
-                <MenuItem Header="Manage regular expression groups"/>
+                <MenuItem Header="Hash sets">
+                    <MenuItem Header="New hash set" x:Name="menuNewHash" Click="menuNewHash_Click"/>
+                    <MenuItem Header="Manage existing hash set"/>
+                </MenuItem>
+                <MenuItem Header="Regular expression groups">
+                    <MenuItem Header="New regular expression group"/>
+                    <MenuItem Header="Manage existing regular expression groups"/>
+                </MenuItem>
             </MenuItem>
             <MenuItem Header="Help">
                 <MenuItem Header="User guide" InputGestureText="F1"/>
@@ -74,7 +80,7 @@
                         <DockPanel Grid.Column="0">
                             <TextBlock Style="{StaticResource SubHeader}" DockPanel.Dock="Top"
                                    Text="AVAILABLE HASH SETS" Margin="3,3,3,1"/>
-                            <ListView Margin="3,0,3,0" ItemsSource="{Binding AvailableHashInfoGroups}"
+                            <ListView Margin="3,0,3,0" ItemsSource="{Binding AvailableHashGroups}"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                   ItemTemplate="{StaticResource HashGroupTemplate}">
                             </ListView>
@@ -89,7 +95,7 @@
                         <DockPanel Grid.Column="2">
                             <TextBlock Style="{StaticResource SubHeader}" DockPanel.Dock="Top"
                                    Text="SELECTED HASH SETS" Margin="3,3,3,1"/>
-                            <ListView Margin="3,0,3,0" ItemsSource="{Binding SelectedHashInfoGroups}"
+                            <ListView Margin="3,0,3,0" ItemsSource="{Binding SelectedHashGroups}"
                                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                   ItemTemplate="{StaticResource HashGroupTemplate}">
                             </ListView>

@@ -28,6 +28,19 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
         protected DataEntryMode _mode;
         protected Action _exitAction;
 
+        private string _WindowTitle;
+
+        public string WindowTitle
+        {
+            get { return _WindowTitle; }
+            set
+            {
+                _WindowTitle = value;
+                RaisePropertyChanged("WindowTitle");
+            }
+        }
+
+
         private bool _IsBusy;
 
         public bool IsBusy
@@ -64,8 +77,21 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
             }
         }
 
+        private string _ErrorMessage;
 
-        public DataEntryViewModelBase(T entity, DataEntryMode mode = DataEntryMode.New, Action exitAction)
+        public string ErrorMessage
+        {
+            get { return _ErrorMessage; }
+            set
+            {
+                _ErrorMessage = value;
+                RaisePropertyChanged("ErrorMessage");
+            }
+        }
+
+
+
+        public DataEntryViewModelBase(T entity, DataEntryMode mode = DataEntryMode.New, Action exitAction = null)
         {
             _entity = entity;
             _mode = mode;
@@ -75,8 +101,6 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
 
         protected virtual async void DoLoading()
         {
-            await LoadAlways();
-
             if (_mode == DataEntryMode.Edit)
             {
                 await LoadExisting();
@@ -86,8 +110,6 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
                 await LoadNew();
             }
         }
-
-        protected abstract Task LoadAlways();
 
         protected abstract Task LoadExisting();
 

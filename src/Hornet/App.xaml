@@ -11,14 +11,12 @@
                 <StackPanel>
                     <TextBlock Text="{Binding Name}" TextWrapping="Wrap" FontSize="9" FontWeight="Bold"/>
                     <TextBlock FontSize="9" TextWrapping="Wrap" FontWeight="Light">
-                                            <Run Text="MD5:"/>
-                                            <Run Text="{Binding MD5s.Count, Mode=OneWay, StringFormat='#,##0'}"/>
-                                            <Run Text="|"/>
-                                            <Run Text="SHA1:"/>
-                                            <Run Text="{Binding SHA1s.Count, Mode=OneWay, StringFormat='#,##0'}"/>
-                                            <Run Text="|"/>
-                                            <Run Text="SHA256:"/>
-                                            <Run Text="{Binding SHA256s.Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                        <Run Text="{Binding MD5Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                        <Run Text="MD5,"/>
+                        <Run Text="{Binding SHA1Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                        <Run Text="SHA1,"/>
+                        <Run Text="{Binding SHA256Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                        <Run Text="SHA256"/>
                     </TextBlock>
                 </StackPanel>
             </DataTemplate>
