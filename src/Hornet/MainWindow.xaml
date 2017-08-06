@@ -7,10 +7,8 @@
         xmlns:conv="clr-namespace:Hornet.Converters"
         mc:Ignorable="d"
         Title="HORNET - Scan control centre" Height="700" Width="800"
-        DataContext="{Binding Source={StaticResource Locator}, Path=Main}"
         ResizeMode="NoResize"
         Background="White">
-
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="White">
             <MenuItem Header="File">

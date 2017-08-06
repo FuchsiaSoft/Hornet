@@ -110,7 +110,7 @@ namespace Hornet.ViewModel.ViewModel
         private void NewHashSet()
         {
             AddEditHashSetViewModel viewModel = new AddEditHashSetViewModel();
-            viewModel.ShowWindow(true);
+            viewModel.ShowWindow(false);
         }
 
         #region Design time data

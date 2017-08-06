@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Ionic.Zip;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -44,12 +46,19 @@ namespace Hornet.IO.FileManagement
         /// </summary>
         public List<HashResult> Matches { get; internal set; } = new List<HashResult>();
 
-        public Stream MakeDefinitionFile()
+        public void SaveToFile(string filePath)
         {
-            //TODO: make a zip file in memory here
-            //have a stream writer write the contents of this object
-            //serialized, and then pass that stream to ionic
-            throw new NotImplementedException();
+            string json = JsonConvert.SerializeObject(this, Formatting.Indented);
+
+            using (FileStream fileStream = File.Create(filePath))
+            using (ZipFile zip = new ZipFile())
+            {
+                byte[] fileBytes = Encoding.UTF8.GetBytes(json);
+
+                zip.AddEntry("Content", fileBytes);
+
+                zip.Save(fileStream);
+            }
         }
     }
 }

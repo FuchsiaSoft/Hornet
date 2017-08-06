@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Hornet.ViewModel.ViewModel.DatabaseManagement;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,16 @@ namespace Hornet.DatabaseManagement
         public AddEditHashSet()
         {
             InitializeComponent();
+        }
+
+        private void Grid_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                ((AddEditHashSetViewModel)DataContext).HandleDroppedFiles(files);
+            }
         }
     }
 }

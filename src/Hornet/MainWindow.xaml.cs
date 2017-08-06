@@ -1,4 +1,5 @@
 ﻿using Hornet.DatabaseManagement;
+using Hornet.ViewModel.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,7 @@ namespace Hornet
         public MainWindow()
         {
             InitializeComponent();
+            this.DataContext = new MainViewModel();
         }
 
         private void menuAbout_Click(object sender, RoutedEventArgs e)

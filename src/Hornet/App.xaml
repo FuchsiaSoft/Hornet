@@ -82,7 +82,6 @@
 
             <BooleanToVisibilityConverter x:Key="BoolToVis"/>
             <conv:InverseBooleanConverter x:Key="BoolInverter"/>
-            <vm:ViewModelLocator x:Key="Locator"/>
         </ResourceDictionary>
         
     </Application.Resources>

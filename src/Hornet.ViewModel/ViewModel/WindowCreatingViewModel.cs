@@ -25,7 +25,7 @@ namespace Hornet.ViewModel.ViewModel
         }
 
 
-        private bool _IsBusy;
+        private bool _IsBusy = false;
 
         public bool IsBusy
         {
@@ -37,7 +37,7 @@ namespace Hornet.ViewModel.ViewModel
             }
         }
 
-        private bool _EnableControls;
+        private bool _EnableControls = true;
 
         public bool EnableControls
         {

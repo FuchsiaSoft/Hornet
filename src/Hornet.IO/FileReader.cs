@@ -75,6 +75,8 @@ namespace Hornet.IO
             switch (extension)
             {
                 case ".TXT":
+                case ".CSV":
+                case ".XML":
                     reader = new TextContentReader(EncodingType.AutoDetect);
                     break;
 
