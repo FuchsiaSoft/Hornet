@@ -22,7 +22,7 @@
             </MenuItem>
             <MenuItem Header="Database">
                 <MenuItem Header="Hash sets">
-                    <MenuItem Header="New hash set" x:Name="menuNewHash" Click="menuNewHash_Click"/>
+                    <MenuItem Header="New hash set" Command="{Binding AddNewHashSetCommand}"/>
                     <MenuItem Header="Manage existing hash set"/>
                 </MenuItem>
                 <MenuItem Header="Regular expression groups">

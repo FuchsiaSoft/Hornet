@@ -29,5 +29,6 @@ namespace Hornet.Model
         public virtual DbSet<HashEntry> HashEntries { get; set; }
         public virtual DbSet<RegexGroup> RegexGroups { get; set; }
         public virtual DbSet<RegexEntry> RegexEntries { get; set; }
+        public virtual DbSet<MD5> MD5 { get; set; }
     }
 }

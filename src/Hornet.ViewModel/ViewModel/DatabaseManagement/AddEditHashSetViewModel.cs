@@ -180,7 +180,7 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
                         
                         foreach (MD5 md5 in MD5s)
                         {
-                            group.HashEntries.Add(md5);
+                            group.MD5s.Add(md5);
                         }
 
                         foreach (SHA1 sha1 in SHA1s)

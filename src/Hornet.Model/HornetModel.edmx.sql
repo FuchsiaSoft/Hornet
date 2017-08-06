@@ -2,8 +2,8 @@
 -- --------------------------------------------------
 -- Entity Designer DDL Script for SQL Server 2005, 2008, 2012 and Azure
 -- --------------------------------------------------
--- Date Created: 07/30/2017 07:02:34
--- Generated from EDMX file: C:\Users\Chris\Documents\GitHub\Hornet\Hornet.Model\HornetModel.edmx
+-- Date Created: 08/06/2017 14:42:49
+-- Generated from EDMX file: C:\Users\Chris\Documents\GitHub\Hornet\src\Hornet.Model\HornetModel.edmx
 -- --------------------------------------------------
 
 SET QUOTED_IDENTIFIER OFF;
@@ -17,11 +17,41 @@ GO
 -- Dropping existing FOREIGN KEY constraints
 -- --------------------------------------------------
 
+IF OBJECT_ID(N'[dbo].[FK_HashGroupHashEntry]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[HashEntries] DROP CONSTRAINT [FK_HashGroupHashEntry];
+GO
+IF OBJECT_ID(N'[dbo].[FK_RegexGroupRegexEntry]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[RegexEntries] DROP CONSTRAINT [FK_RegexGroupRegexEntry];
+GO
+IF OBJECT_ID(N'[dbo].[FK_SHA1_inherits_HashEntry]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[HashEntries_SHA1] DROP CONSTRAINT [FK_SHA1_inherits_HashEntry];
+GO
+IF OBJECT_ID(N'[dbo].[FK_SHA256_inherits_HashEntry]', 'F') IS NOT NULL
+    ALTER TABLE [dbo].[HashEntries_SHA256] DROP CONSTRAINT [FK_SHA256_inherits_HashEntry];
+GO
 
 -- --------------------------------------------------
 -- Dropping existing tables
 -- --------------------------------------------------
 
+IF OBJECT_ID(N'[dbo].[HashGroups]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[HashGroups];
+GO
+IF OBJECT_ID(N'[dbo].[HashEntries]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[HashEntries];
+GO
+IF OBJECT_ID(N'[dbo].[RegexGroups]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[RegexGroups];
+GO
+IF OBJECT_ID(N'[dbo].[RegexEntries]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[RegexEntries];
+GO
+IF OBJECT_ID(N'[dbo].[HashEntries_SHA1]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[HashEntries_SHA1];
+GO
+IF OBJECT_ID(N'[dbo].[HashEntries_SHA256]', 'U') IS NOT NULL
+    DROP TABLE [dbo].[HashEntries_SHA256];
+GO
 
 -- --------------------------------------------------
 -- Creating all tables
@@ -61,9 +91,12 @@ CREATE TABLE [dbo].[RegexEntries] (
 );
 GO
 
--- Creating table 'HashEntries_MD5'
-CREATE TABLE [dbo].[HashEntries_MD5] (
-    [Id] int  NOT NULL
+-- Creating table 'MD5'
+CREATE TABLE [dbo].[MD5] (
+    [Id] int IDENTITY(1,1) NOT NULL,
+    [HashValue] nvarchar(max)  NULL,
+    [Remarks] nvarchar(max)  NULL,
+    [HashGroupId] int  NOT NULL
 );
 GO
 
@@ -107,9 +140,9 @@ ADD CONSTRAINT [PK_RegexEntries]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
--- Creating primary key on [Id] in table 'HashEntries_MD5'
-ALTER TABLE [dbo].[HashEntries_MD5]
-ADD CONSTRAINT [PK_HashEntries_MD5]
+-- Creating primary key on [Id] in table 'MD5'
+ALTER TABLE [dbo].[MD5]
+ADD CONSTRAINT [PK_MD5]
     PRIMARY KEY CLUSTERED ([Id] ASC);
 GO
 
@@ -159,13 +192,19 @@ ON [dbo].[RegexEntries]
     ([RegexGroupId]);
 GO
 
--- Creating foreign key on [Id] in table 'HashEntries_MD5'
-ALTER TABLE [dbo].[HashEntries_MD5]
-ADD CONSTRAINT [FK_MD5_inherits_HashEntry]
-    FOREIGN KEY ([Id])
-    REFERENCES [dbo].[HashEntries]
+-- Creating foreign key on [HashGroupId] in table 'MD5'
+ALTER TABLE [dbo].[MD5]
+ADD CONSTRAINT [FK_HashGroupMD5]
+    FOREIGN KEY ([HashGroupId])
+    REFERENCES [dbo].[HashGroups]
         ([Id])
-    ON DELETE CASCADE ON UPDATE NO ACTION;
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
+GO
+
+-- Creating non-clustered index for FOREIGN KEY 'FK_HashGroupMD5'
+CREATE INDEX [IX_FK_HashGroupMD5]
+ON [dbo].[MD5]
+    ([HashGroupId]);
 GO
 
 -- Creating foreign key on [Id] in table 'HashEntries_SHA1'

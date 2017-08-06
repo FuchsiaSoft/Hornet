@@ -10,7 +10,7 @@
     <EntitySet Name="HashEntries" EntityType="HornetModel.Store.HashEntries" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="RegexGroups" EntityType="HornetModel.Store.RegexGroups" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="RegexEntries" EntityType="HornetModel.Store.RegexEntries" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="HashEntries_MD5" EntityType="HornetModel.Store.HashEntries_MD5" store:Type="Tables" Schema="dbo" />
+    <EntitySet Name="MD5" EntityType="HornetModel.Store.MD5" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="HashEntries_SHA1" EntityType="HornetModel.Store.HashEntries_SHA1" store:Type="Tables" Schema="dbo" />
     <EntitySet Name="HashEntries_SHA256" EntityType="HornetModel.Store.HashEntries_SHA256" store:Type="Tables" Schema="dbo" />
     <AssociationSet Name="HashGroupHashEntry" Association="HornetModel.Store.HashGroupHashEntry">
@@ -21,9 +21,9 @@
       <End Role="RegexGroup" EntitySet="RegexGroups" />
       <End Role="RegexEntry" EntitySet="RegexEntries" />
     </AssociationSet>
-    <AssociationSet Name="FK_MD5_inherits_HashEntry" Association="HornetModel.Store.FK_MD5_inherits_HashEntry">
-      <End Role="HashEntry" EntitySet="HashEntries" />
-      <End Role="MD5" EntitySet="HashEntries_MD5" />
+    <AssociationSet Name="HashGroupMD5" Association="HornetModel.Store.HashGroupMD5">
+      <End Role="HashGroup" EntitySet="HashGroups" />
+      <End Role="MD5" EntitySet="MD5" />
     </AssociationSet>
     <AssociationSet Name="FK_SHA1_inherits_HashEntry" Association="HornetModel.Store.FK_SHA1_inherits_HashEntry">
       <End Role="HashEntry" EntitySet="HashEntries" />
@@ -68,11 +68,14 @@
     <Property Name="Remarks" Type="nvarchar(max)" Nullable="false" />
     <Property Name="RegexGroupId" Type="int" Nullable="false" />
   </EntityType>
-  <EntityType Name="HashEntries_MD5">
+  <EntityType Name="MD5">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="HashValue" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="Remarks" Type="nvarchar(max)" Nullable="true" />
+    <Property Name="HashGroupId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="HashEntries_SHA1">
     <Key>
@@ -110,17 +113,15 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
-  <Association Name="FK_MD5_inherits_HashEntry">
-    <End Role="HashEntry" Type="HornetModel.Store.HashEntries" Multiplicity="1">
-      <OnDelete Action="Cascade" />
-    </End>
-    <End Role="MD5" Type="HornetModel.Store.HashEntries_MD5" Multiplicity="0..1" />
+  <Association Name="HashGroupMD5">
+    <End Role="HashGroup" Type="HornetModel.Store.HashGroups" Multiplicity="1" />
+    <End Role="MD5" Type="HornetModel.Store.MD5" Multiplicity="*" />
     <ReferentialConstraint>
-      <Principal Role="HashEntry">
+      <Principal Role="HashGroup">
         <PropertyRef Name="Id" />
       </Principal>
       <Dependent Role="MD5">
-        <PropertyRef Name="Id" />
+        <PropertyRef Name="HashGroupId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -169,7 +170,12 @@
             <End Role="RegexGroup" EntitySet="RegexGroups" />
             <End Role="RegexEntry" EntitySet="RegexEntries" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="MD5" EntityType="HornetModel.MD5" />
+          <AssociationSet Name="HashGroupMD5" Association="HornetModel.HashGroupMD5">
+            <End Role="HashGroup" EntitySet="HashGroups" />
+            <End Role="MD5" EntitySet="MD5" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="HashGroup">
           <Key>
             <PropertyRef Name="Id" />
@@ -178,6 +184,7 @@
           <Property Name="Name" Type="String" Nullable="false" />
           <Property Name="Description" Type="String" Nullable="true" />
           <NavigationProperty Name="HashEntries" Relationship="HornetModel.HashGroupHashEntry" FromRole="HashGroup" ToRole="HashEntry" />
+          <NavigationProperty Name="MD5s" Relationship="HornetModel.HashGroupMD5" FromRole="HashGroup" ToRole="MD5" />
         </EntityType>
         <EntityType Name="HashEntry">
           <Key>
@@ -201,8 +208,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="MD5" BaseType="HornetModel.HashEntry">
-          </EntityType>
         <EntityType Name="SHA1" BaseType="HornetModel.HashEntry" />
         <EntityType Name="SHA256" BaseType="HornetModel.HashEntry" />
         <EntityType Name="RegexGroup">
@@ -236,6 +241,28 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="MD5">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="HashValue" Type="String" Nullable="true" />
+          <Property Name="Remarks" Type="String" Nullable="true" />
+          <NavigationProperty Name="HashGroup" Relationship="HornetModel.HashGroupMD5" FromRole="MD5" ToRole="HashGroup" />
+          <Property Name="HashGroupId" Type="Int32" Nullable="false" />
+        </EntityType>
+        <Association Name="HashGroupMD5">
+          <End Type="HornetModel.HashGroup" Role="HashGroup" Multiplicity="1" />
+          <End Type="HornetModel.MD5" Role="MD5" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HashGroup">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="MD5">
+              <PropertyRef Name="HashGroupId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -258,11 +285,6 @@
           <ScalarProperty Name="HashValue" ColumnName="HashValue" />
           <ScalarProperty Name="Remarks" ColumnName="Remarks" />
           <ScalarProperty Name="HashGroupId" ColumnName="HashGroupId" />
-        </MappingFragment>
-      </EntityTypeMapping>
-      <EntityTypeMapping TypeName="IsTypeOf(HornetModel.MD5)">
-        <MappingFragment StoreEntitySet="HashEntries_MD5">
-          <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>
       <EntityTypeMapping TypeName="IsTypeOf(HornetModel.SHA1)">
@@ -292,6 +314,16 @@
           <ScalarProperty Name="Pattern" ColumnName="Pattern" />
           <ScalarProperty Name="Remarks" ColumnName="Remarks" />
           <ScalarProperty Name="RegexGroupId" ColumnName="RegexGroupId" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="MD5">
+      <EntityTypeMapping TypeName="IsTypeOf(HornetModel.MD5)">
+        <MappingFragment StoreEntitySet="MD5">
+          <ScalarProperty Name="Id" ColumnName="Id" />
+          <ScalarProperty Name="HashValue" ColumnName="HashValue" />
+          <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+          <ScalarProperty Name="HashGroupId" ColumnName="HashGroupId" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

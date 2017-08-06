@@ -10,6 +10,9 @@ using Hornet.Model;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Data.Entity;
+using System.Windows.Input;
+using GalaSoft.MvvmLight.CommandWpf;
+using Hornet.ViewModel.ViewModel.DatabaseManagement;
 
 namespace Hornet.ViewModel.ViewModel
 {
@@ -156,6 +159,21 @@ namespace Hornet.ViewModel.ViewModel
             SelectedHashGroups = new ObservableCollection<HashGroup>(selectedGroups);
         }
 
+        public ICommand AddNewHashSetCommand { get { return new RelayCommand(NewHashSet, CanNewHashSet); } }
+
+        private bool CanNewHashSet()
+        {
+            return true;
+        }
+
+        private void NewHashSet()
+        {
+            AddEditHashSetViewModel viewModel = new AddEditHashSetViewModel(null, DataEntryMode.New, LoadHashGroups);
+            viewModel.ShowWindow(true);
+        }
+
+        #region Design time data
+
         private void AddDesignTimeData()
         {
             AvailableHashGroups.Add(GetRandomHashGroup());
@@ -256,5 +274,7 @@ namespace Hornet.ViewModel.ViewModel
                 return sb.ToString();
             }
         }
+
+        #endregion
     }
 }

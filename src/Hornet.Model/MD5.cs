@@ -12,7 +12,13 @@ namespace Hornet.Model
     using System;
     using System.Collections.Generic;
     
-    public partial class MD5 : HashEntry
+    public partial class MD5
     {
+        public int Id { get; set; }
+        public string HashValue { get; set; }
+        public string Remarks { get; set; }
+        public int HashGroupId { get; set; }
+    
+        public virtual HashGroup HashGroup { get; set; }
     }
 }

@@ -46,7 +46,7 @@ namespace Hornet.ViewModel.ViewModel
             SimpleIoc.Default.Register<MainViewModel>();
         }
 
-        private static MainViewModel _Main = new MainViewModel(); //only ever one of this
+        private MainViewModel _Main = new MainViewModel(); //only ever one of this
 
         public MainViewModel Main
         {
@@ -55,17 +55,6 @@ namespace Hornet.ViewModel.ViewModel
                 return _Main;
             }
         }
-
-        public AddEditHashSetViewModel AddHashSet
-        {
-            get
-            {
-                return new AddEditHashSetViewModel(null, DataEntryMode.New, new System.Action(_Main.LoadHashGroups));
-            }
-        }
-
-        //TODO: here we will create new viewmodel for popup windows and pass
-        //through delegate for main viewmodel refresh commands
         
         public static void Cleanup()
         {

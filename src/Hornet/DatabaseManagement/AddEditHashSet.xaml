@@ -6,8 +6,7 @@
         xmlns:local="clr-namespace:Hornet.DatabaseManagement"
         mc:Ignorable="d"
         Title="{Binding WindowTitle}" Width="600" Height="600"
-        ResizeMode="CanResizeWithGrip"
-        DataContext="{Binding Source={StaticResource Locator}, Path=AddHashSet}">
+        ResizeMode="CanResizeWithGrip">
     <Grid>
         <DockPanel Margin="5">
             <DockPanel Margin="1" DockPanel.Dock="Top">
@@ -18,10 +17,11 @@
                 <Label Content="Description:" Width="80"/>
                 <TextBox Text="{Binding Description}" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" Height="80"/>
             </DockPanel>
-            <StackPanel DockPanel.Dock="Bottom" HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button Content="Save" Width="80" Margin="3"/>
-                <Button Content="Cancel" Width="80" Margin="3"/>
-            </StackPanel>
+            <DockPanel DockPanel.Dock="Bottom">
+                <Button Content="Cancel" DockPanel.Dock="Right" Width="80" Margin="3" Command="{Binding CancelCommand}"/>
+                <Button Content="Save" DockPanel.Dock="Right" Width="80" Margin="3" Command="{Binding SaveCommand}"/>
+                <ProgressBar Height="10" Margin="10,0,10,0" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+            </DockPanel>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition/>

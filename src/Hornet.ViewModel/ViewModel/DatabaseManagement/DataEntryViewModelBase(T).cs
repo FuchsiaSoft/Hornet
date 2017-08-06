@@ -22,7 +22,7 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
     /// same viewmodel
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class DataEntryViewModelBase<T> : ViewModelBase
+    public abstract class DataEntryViewModelBase<T> : WindowCreatingViewModel
     {
         protected T _entity;
         protected DataEntryMode _mode;
@@ -121,13 +121,10 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
 
         protected virtual void Cancel(Window window)
         {
-            CloseWindow(window);
+            CloseWindow();
         }
 
-        protected virtual void CloseWindow(Window window)
-        {
-            window.Close();
-        }
+        
 
         public RelayCommand<Window> SaveCommand { get { return new RelayCommand<Window>(Save, CanSave); } }
 
@@ -138,17 +135,17 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
             if (_mode == DataEntryMode.Edit)
             {
                 MarkBusy("Modifying data...");
-                await SaveNew();
+                await SaveExisting();
             }
             else
             {
                 MarkBusy("Saving new data...");
-                await SaveExisting();
+                await SaveNew();
             }
 
             MarkFree();
-            CloseWindow(window);
-            _exitAction.Invoke();
+            CloseWindow();
+            _exitAction?.Invoke();
         }
 
         protected abstract Task SaveNew();

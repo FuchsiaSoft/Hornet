@@ -18,6 +18,7 @@ namespace Hornet.Model
         public HashGroup()
         {
             this.HashEntries = new HashSet<HashEntry>();
+            this.MD5s = new HashSet<MD5>();
         }
     
         public int Id { get; set; }
@@ -26,5 +27,7 @@ namespace Hornet.Model
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<HashEntry> HashEntries { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<MD5> MD5s { get; set; }
     }
 }

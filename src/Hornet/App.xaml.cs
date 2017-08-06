@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Hornet.DatabaseManagement;
+using Hornet.ViewModel.ViewModel;
+using Hornet.ViewModel.ViewModel.DatabaseManagement;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -14,10 +17,15 @@ namespace Hornet
     /// </summary>
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        protected async override void OnStartup(StartupEventArgs e)
         {
             SplashScreen splash = new SplashScreen("Splash.png");
             splash.Show(false);
+            await Task.Run(() =>
+            {
+                WindowMediator.StartListening();
+                WindowMediator.Register<AddEditHashSetViewModel, AddEditHashSet>();
+            });
             Thread.Sleep(7000);
             splash.Close(TimeSpan.FromMilliseconds(5));
         }
