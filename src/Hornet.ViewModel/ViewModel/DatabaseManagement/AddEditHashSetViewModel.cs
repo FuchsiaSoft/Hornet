@@ -191,6 +191,21 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
 
         #endregion
 
+        public AddEditHashSetViewModel()
+        {
+            WindowTitle = "Create new hash set definition";
+        }
+
+        public AddEditHashSetViewModel(HashInfoGroup group)
+        {
+            WindowTitle = "Edit hash set definition";
+            Name = group.Name;
+            Description = group.Description;
+            MD5s = new ObservableCollection<HashInfo>(group.MD5s);
+            SHA1s = new ObservableCollection<HashInfo>(group.SHA1s);
+            SHA256s = new ObservableCollection<HashInfo>(group.SHA256s);
+        }
+
         public ICommand CancelCommand { get { return new RelayCommand(CloseWindow); } }
 
         public ICommand SaveCommand { get { return new RelayCommand(Save); } }
@@ -219,6 +234,8 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
                         {
                             group.Name = Name;
                         }
+
+                        group.Description = Description ?? string.Empty;
 
                         foreach (var md5 in MD5s)
                         {

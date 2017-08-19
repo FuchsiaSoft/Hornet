@@ -19,7 +19,7 @@
                 <MenuItem Header="Open">
                     <MenuItem Header="Open scan definition" InputGestureText="Ctrl+O"/>
                     <Separator/>
-                    <MenuItem Header="Open hash set definition"/>
+                    <MenuItem Header="Open hash set definition" Command="{Binding OpenHashSetCommand}"/>
                     <MenuItem Header="Open regular expression set definition"/>
                 </MenuItem>
                 

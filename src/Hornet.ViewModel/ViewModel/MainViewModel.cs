@@ -12,6 +12,7 @@ using System.Data.Entity;
 using System.Windows.Input;
 using GalaSoft.MvvmLight.CommandWpf;
 using Hornet.ViewModel.ViewModel.DatabaseManagement;
+using Microsoft.Win32;
 
 namespace Hornet.ViewModel.ViewModel
 {
@@ -136,6 +137,40 @@ namespace Hornet.ViewModel.ViewModel
             }
 
             MarkFree();
+        }
+
+        public ICommand OpenHashSetCommand { get { return new RelayCommand(OpenHashSet); } }
+
+        private async void OpenHashSet()
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Title = "Choose hash set file";
+            dlg.AddExtension = true;
+            dlg.DefaultExt = ".hset";
+            dlg.Filter = "Hash set definition (*.hset)|*.hset";
+            dlg.Multiselect = false;
+
+            if (dlg.ShowDialog() == true)
+            {
+                HashInfoGroup group = await Task.Run(() =>
+                {
+                    try
+                    {
+                        return HashInfoGroup.FromFile(dlg.FileName);
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                    }
+
+                });
+
+                if (group != null)
+                {
+                    AddEditHashSetViewModel viewModel = new AddEditHashSetViewModel(group);
+                    viewModel.ShowWindow();
+                }
+            }
         }
 
         #region Design time data

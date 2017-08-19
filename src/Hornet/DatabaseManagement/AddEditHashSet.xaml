@@ -89,14 +89,14 @@
                     </Border>
                     <DataGrid Margin="3,0,3,0" AutoGenerateColumns="False" ItemsSource="{Binding MD5s}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Hash Value" Binding="{Binding Hash}" FontFamily="Courier New">
+                            <DataGridTextColumn Header="Hash Value" Width="*" Binding="{Binding Hash}" FontFamily="Courier New">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
                                         <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Remarks" Width="*" MinWidth="80" Binding="{Binding Remarks}" FontFamily="Courier New"/>
+                            <DataGridTextColumn Header="Remarks" Width="80" Binding="{Binding Remarks}" FontFamily="Courier New"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     
@@ -112,14 +112,14 @@
                     </Border>
                     <DataGrid Margin="3,0,3,0" AutoGenerateColumns="False" ItemsSource="{Binding SHA1s}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Hash Value" Binding="{Binding Hash}" FontFamily="Courier New">
+                            <DataGridTextColumn Header="Hash Value" Width="*" Binding="{Binding Hash}" FontFamily="Courier New">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
                                         <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Remarks" Width="*" MinWidth="80" Binding="{Binding Remarks}" FontFamily="Courier New"/>
+                            <DataGridTextColumn Header="Remarks" Width="80" Binding="{Binding Remarks}" FontFamily="Courier New"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -135,14 +135,14 @@
                     </Border>
                     <DataGrid Margin="3,0,3,0" AutoGenerateColumns="False" ItemsSource="{Binding SHA256s}">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Hash Value" Binding="{Binding Hash}" FontFamily="Courier New">
+                            <DataGridTextColumn Header="Hash Value" Width="*" Binding="{Binding Hash}" FontFamily="Courier New">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
                                         <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Remarks" Width="*" MinWidth="80" Binding="{Binding Remarks}" FontFamily="Courier New"/>
+                            <DataGridTextColumn Header="Remarks" Width="80" Binding="{Binding Remarks}" FontFamily="Courier New"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
