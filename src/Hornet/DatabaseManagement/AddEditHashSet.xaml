@@ -9,14 +9,63 @@
         ResizeMode="CanResizeWithGrip">
     <Grid AllowDrop="True" Drop="Grid_Drop">
         <DockPanel Margin="5">
-            <DockPanel Margin="1" DockPanel.Dock="Top">
-                <Label Content="Name:" Width="80"/>
-                <TextBox Text="{Binding Name}"/>
-            </DockPanel>
-            <DockPanel Margin="1" DockPanel.Dock="Top">
-                <Label Content="Description:" Width="80"/>
-                <TextBox Text="{Binding Description}" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" Height="80"/>
-            </DockPanel>
+            <Grid DockPanel.Dock="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <DockPanel>
+                    <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Fill="Black" HorizontalAlignment="Right"
+                          Stretch="Uniform" Margin="5,2,5,2" Height="16"
+                          Data="F1 M 38,19C 48.4934,19 57,27.5066 57,38C 57,48.4934 48.4934,57 38,57C 27.5066,57 19,48.4934 19,38C 19,27.5066 27.5066,19 38,19 Z M 33.25,33.25L 33.25,36.4167L 36.4166,36.4167L 36.4166,47.5L 33.25,47.5L 33.25,50.6667L 44.3333,50.6667L 44.3333,47.5L 41.1666,47.5L 41.1666,36.4167L 41.1666,33.25L 33.25,33.25 Z M 38.7917,25.3333C 37.48,25.3333 36.4167,26.3967 36.4167,27.7083C 36.4167,29.02 37.48,30.0833 38.7917,30.0833C 40.1033,30.0833 41.1667,29.02 41.1667,27.7083C 41.1667,26.3967 40.1033,25.3333 38.7917,25.3333 Z"/>
+                            <TextBlock Style="{StaticResource Header}" Text="HASH SET DETAILS" Margin="5,3,5,3"/>
+                        </StackPanel>
+                    </Border>
+                    <DockPanel Margin="1" DockPanel.Dock="Top">
+                        <Label Content="Name:" Width="80"/>
+                        <TextBox Text="{Binding Name}"/>
+                    </DockPanel>
+                    <DockPanel Margin="1" DockPanel.Dock="Top">
+                        <Label Content="Description:" Width="80"/>
+                        <TextBox Text="{Binding Description}" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap"/>
+                    </DockPanel>
+                </DockPanel>
+                <DockPanel Grid.Column="1">
+                    <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Fill="Black" HorizontalAlignment="Right"
+                          Stretch="Uniform" Margin="5,2,5,2" Height="16"
+                          Data="F1 M 28.5,17.4167L 53.8333,44.3333L 43.5417,44.3333L 49.875,55.4167L 43.5417,58.5833L 37.2083,47.5L 28.5,55.4167L 28.5,17.4167 Z"/>
+                            <TextBlock Style="{StaticResource Header}" Text="DRAG AND DROP HASH OPTIONS" Margin="5,3,5,3"/>
+                        </StackPanel>
+                    </Border>
+                    <StackPanel Margin="5">
+                        <RadioButton GroupName="HashSource" Content="Look in content of dragged files for hashes"/>
+                        <RadioButton x:Name="grpCompute" GroupName="HashSource" Content="Compute hashes for dragged files"/>
+                        <GroupBox Header="HASH COMPUTE SETTINGS" Margin="0,5,0,0" IsEnabled="{Binding ElementName=grpCompute, Path=IsChecked}">
+                            <StackPanel Margin="2">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Content="Include MD5" Grid.Column="0"/>
+                                    <CheckBox Content="Include SHA1" Grid.Column="1"/>
+                                    <CheckBox Content="Include SHA256" Grid.Column="2"/>
+                                </Grid>
+                                <RadioButton Content="No remarks" GroupName="Remarks"/>
+                                <RadioButton Content="Include file name as remarks" GroupName="Remarks"/>
+                                <RadioButton x:Name="grpFixedTextRemarks" Content="Fixed text remarks for all hashes" GroupName="Remarks"/>
+                                <TextBox Margin="2" IsEnabled="{Binding ElementName=grpFixedTextRemarks, Path=IsChecked}"/>
+                            </StackPanel>
+                        </GroupBox>
+                    </StackPanel>
+                </DockPanel>
+            </Grid>
+            
             <DockPanel DockPanel.Dock="Bottom">
                 <Button Content="Cancel" DockPanel.Dock="Right" Width="80" Margin="3" Command="{Binding CancelCommand}" IsEnabled="{Binding EnableControls}"/>
                 <Button Content="Save" DockPanel.Dock="Right" Width="80" Margin="3" Command="{Binding SaveCommand}" IsEnabled="{Binding EnableControls}"/>
