@@ -96,7 +96,7 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Remarks" Width="*" Binding="{Binding Remarks}" FontFamily="Courier New"/>
+                            <DataGridTextColumn Header="Remarks" Width="*" MinWidth="80" Binding="{Binding Remarks}" FontFamily="Courier New"/>
                         </DataGrid.Columns>
                     </DataGrid>
                     
@@ -119,7 +119,7 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Remarks" Width="*" Binding="{Binding Remarks}" FontFamily="Courier New"/>
+                            <DataGridTextColumn Header="Remarks" Width="*" MinWidth="80" Binding="{Binding Remarks}" FontFamily="Courier New"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -142,7 +142,7 @@
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
                             </DataGridTextColumn>
-                            <DataGridTextColumn Header="Remarks" Width="*" Binding="{Binding Remarks}" FontFamily="Courier New"/>
+                            <DataGridTextColumn Header="Remarks" Width="*" MinWidth="80" Binding="{Binding Remarks}" FontFamily="Courier New"/>
                         </DataGrid.Columns>
                     </DataGrid>
 

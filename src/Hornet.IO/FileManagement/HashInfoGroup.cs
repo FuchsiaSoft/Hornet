@@ -60,5 +60,27 @@ namespace Hornet.IO.FileManagement
                 zip.Save(fileStream);
             }
         }
+
+        public static HashInfoGroup FromFile(string filePath)
+        {
+            try
+            {
+                using (FileStream fileStream = File.OpenRead(filePath))
+                using (ZipFile zip = ZipFile.Read(filePath))
+                using (MemoryStream stream = new MemoryStream())
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    zip.Entries.First(e => e.FileName == "Content").Extract(stream);
+                    stream.Seek(0, SeekOrigin.Begin);
+                    string json = reader.ReadToEnd();
+                    HashInfoGroup group = JsonConvert.DeserializeObject<HashInfoGroup>(json);
+                    return group;
+                }
+            }
+            catch (Exception)
+            {
+                throw new FileFormatException("Not a valid hashset file");
+            }
+        }
     }
 }

@@ -15,7 +15,7 @@ using Hornet.ViewModel.ViewModel.DatabaseManagement;
 
 namespace Hornet.ViewModel.ViewModel
 {
-    public class MainViewModel : ViewModelBase
+    public class MainViewModel : WindowCreatingViewModel
     {
         #region Binding Properties
 
@@ -45,7 +45,6 @@ namespace Hornet.ViewModel.ViewModel
                 RaisePropertyChanged("AvailableHashGroups");
             }
         }
-
 
         private ObservableCollection<HashInfoGroup> _SelectedHashGroups
             = new ObservableCollection<HashInfoGroup>();
@@ -111,6 +110,32 @@ namespace Hornet.ViewModel.ViewModel
         {
             AddEditHashSetViewModel viewModel = new AddEditHashSetViewModel();
             viewModel.ShowWindow(false);
+        }
+
+        public async void HandleDroppedHashsetFiles(string[] files)
+        {
+            MarkBusy("Processing hash set files...");
+
+            foreach (string filePath in files)
+            {
+                HashInfoGroup group = await Task.Run(() =>
+                {
+                    try
+                    {
+                        HashInfoGroup hashInfoGroup = HashInfoGroup.FromFile(filePath);
+                        return hashInfoGroup;
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                        //TODO: error handling
+                    }
+                });
+
+                if (group != null) AvailableHashGroups.Add(group);
+            }
+
+            MarkFree();
         }
 
         #region Design time data

@@ -33,5 +33,15 @@ namespace Hornet
             About aboutWindow = new About();
             aboutWindow.ShowDialog();
         }
+
+        private void dockHash_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                ((MainViewModel)DataContext).HandleDroppedHashsetFiles(files);
+            }
+        }
     }
 }
