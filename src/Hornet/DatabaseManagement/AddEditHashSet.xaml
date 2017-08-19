@@ -42,8 +42,8 @@
                         </StackPanel>
                     </Border>
                     <StackPanel Margin="5">
-                        <RadioButton GroupName="HashSource" Content="Look in content of dragged files for hashes"/>
-                        <RadioButton x:Name="grpCompute" GroupName="HashSource" Content="Compute hashes for dragged files"/>
+                        <RadioButton GroupName="HashSource" Content="Look in content of dragged files for hashes" IsChecked="{Binding HashFromContent}"/>
+                        <RadioButton x:Name="grpCompute" GroupName="HashSource" Content="Compute hashes for dragged files" IsChecked="{Binding HashFromFiles}"/>
                         <GroupBox Header="HASH COMPUTE SETTINGS" Margin="0,5,0,0" IsEnabled="{Binding ElementName=grpCompute, Path=IsChecked}">
                             <StackPanel Margin="2">
                                 <Grid>
@@ -52,14 +52,14 @@
                                         <ColumnDefinition/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox Content="Include MD5" Grid.Column="0"/>
-                                    <CheckBox Content="Include SHA1" Grid.Column="1"/>
-                                    <CheckBox Content="Include SHA256" Grid.Column="2"/>
+                                    <CheckBox Content="Include MD5" Grid.Column="0" IsChecked="{Binding IncludeMD5}"/>
+                                    <CheckBox Content="Include SHA1" Grid.Column="1" IsChecked="{Binding IncludeSHA1}"/>
+                                    <CheckBox Content="Include SHA256" Grid.Column="2" IsChecked="{Binding IncludeSHA256}"/>
                                 </Grid>
-                                <RadioButton Content="No remarks" GroupName="Remarks"/>
-                                <RadioButton Content="Include file name as remarks" GroupName="Remarks"/>
-                                <RadioButton x:Name="grpFixedTextRemarks" Content="Fixed text remarks for all hashes" GroupName="Remarks"/>
-                                <TextBox Margin="2" IsEnabled="{Binding ElementName=grpFixedTextRemarks, Path=IsChecked}"/>
+                                <RadioButton Content="No remarks" GroupName="Remarks" IsChecked="{Binding NoRemarks}"/>
+                                <RadioButton Content="Include file name as remarks" GroupName="Remarks" IsChecked="{Binding FileNameRemarks}"/>
+                                <RadioButton x:Name="grpFixedTextRemarks" Content="Fixed text remarks for all hashes" GroupName="Remarks" IsChecked="{Binding FixedRemarks}"/>
+                                <TextBox Margin="2" IsEnabled="{Binding ElementName=grpFixedTextRemarks, Path=IsChecked}" Text="{Binding FixedRemarkText, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
                         </GroupBox>
                     </StackPanel>
@@ -70,7 +70,7 @@
                 <Button Content="Cancel" DockPanel.Dock="Right" Width="80" Margin="3" Command="{Binding CancelCommand}" IsEnabled="{Binding EnableControls}"/>
                 <Button Content="Save" DockPanel.Dock="Right" Width="80" Margin="3" Command="{Binding SaveCommand}" IsEnabled="{Binding EnableControls}"/>
                 <TextBlock Text="{Binding BusyMessage, FallbackValue='Busy message here...'}" Width="200" DockPanel.Dock="Left" VerticalAlignment="Center" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
-                <ProgressBar Height="10" Margin="10,0,10,0" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                <ProgressBar Height="10" Margin="10,0,10,0" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}" IsIndeterminate="True"/>
             </DockPanel>
             <Grid IsEnabled="{Binding EnableControls}">
                 <Grid.ColumnDefinitions>

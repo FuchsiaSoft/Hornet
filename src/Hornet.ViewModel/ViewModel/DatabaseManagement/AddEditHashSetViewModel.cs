@@ -5,6 +5,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -41,6 +42,115 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
                 RaisePropertyChanged("Description");
             }
         }
+
+        private bool _HashFromContent = true;
+
+        public bool HashFromContent
+        {
+            get { return _HashFromContent; }
+            set
+            {
+                _HashFromContent = value;
+                RaisePropertyChanged("HashFromContent");
+            }
+        }
+
+        private bool _HashFromFiles;
+
+        public bool HashFromFiles
+        {
+            get { return _HashFromFiles; }
+            set
+            {
+                _HashFromFiles = value;
+                RaisePropertyChanged("HashFromFiles");
+            }
+        }
+
+        private bool _IncludeMD5;
+
+        public bool IncludeMD5
+        {
+            get { return _IncludeMD5; }
+            set
+            {
+                _IncludeMD5 = value;
+                RaisePropertyChanged("IncludeMD5");
+            }
+        }
+
+        private bool _IncludeSHA1;
+
+        public bool IncludeSHA1
+        {
+            get { return _IncludeSHA1; }
+            set
+            {
+                _IncludeSHA1 = value;
+                RaisePropertyChanged("IncludeSHA1");
+            }
+        }
+
+        private bool _IncludeSHA256;
+
+        public bool IncludeSHA256
+        {
+            get { return _IncludeSHA256; }
+            set
+            {
+                _IncludeSHA256 = value;
+                RaisePropertyChanged("IncludeSHA256");
+            }
+        }
+
+        private bool _NoRemarks = true;
+
+        public bool NoRemarks
+        {
+            get { return _NoRemarks; }
+            set
+            {
+                _NoRemarks = value;
+                RaisePropertyChanged("NoRemarks");
+            }
+        }
+
+        private bool _FileNameRemarks;
+
+        public bool FileNameRemarks
+        {
+            get { return _FileNameRemarks; }
+            set
+            {
+                _FileNameRemarks = value;
+                RaisePropertyChanged("FileNameRemarks");
+            }
+        }
+
+        private bool _FixedRemarks;
+
+        public bool FixedRemarks
+        {
+            get { return _FixedRemarks; }
+            set
+            {
+                _FixedRemarks = value;
+                RaisePropertyChanged("FixedRemarks");
+            }
+        }
+
+        private string _FixedRemarkText;
+
+        public string FixedRemarkText
+        {
+            get { return _FixedRemarkText; }
+            set
+            {
+                _FixedRemarkText = value;
+                RaisePropertyChanged("FixedRemarkText");
+            }
+        }
+
 
 
         private ObservableCollection<HashInfo> _MD5s = new ObservableCollection<HashInfo>();
@@ -143,9 +253,82 @@ namespace Hornet.ViewModel.ViewModel.DatabaseManagement
             }
         }
 
-        public async void HandleDroppedFiles(string[] files)
+        public void HandleDroppedFiles(string[] files)
+        {
+            if (HashFromContent)
+            {
+                ExtractHashesFromContent(files);
+                return;
+            }
+
+            if (HashFromFiles)
+            {
+                ExtractHashesFromFiles(files);
+                return;
+            }
+        }
+
+        private async void ExtractHashesFromFiles(string[] files)
         {
             MarkBusy("Processing files...");
+
+            foreach (string filePath in files)
+            {
+                try
+                {
+                    string remarks = string.Empty;
+
+                    if (FixedRemarks)
+                    {
+                        remarks = FixedRemarkText ?? "";
+                    }
+                    else if (FileNameRemarks)
+                    {
+                        remarks = Path.GetFileName(filePath);
+                    }
+
+                    FileResult result = await GetFileResult(filePath, IncludeMD5, IncludeSHA1, IncludeSHA256);
+
+                    if (result.MD5 != null) MD5s.Add(new HashInfo() { Hash = result.MD5, Remarks = remarks, HashType = HashType.MD5 });
+                    if (result.SHA1 != null) SHA1s.Add(new HashInfo() { Hash = result.SHA1, Remarks = remarks, HashType = HashType.SHA1 });
+                    if (result.SHA256 != null) SHA256s.Add(new HashInfo() { Hash = result.SHA256, Remarks = remarks, HashType = HashType.SHA256 });
+                }
+                catch (Exception) { }
+                
+            }
+
+            MarkFree();
+        }
+
+        private Task<FileResult> GetFileResult(string filePath, bool includeMD5, bool includeSHA1, bool includeSHA256)
+        {
+            return Task.Run(() =>
+            {
+                try
+                {
+                    FileReader reader = 
+                    new FileReader(filePath, 
+                                    new ScanOptions() { InMemoryFileSizeLimit = 20971520 }, 
+                                    includeMD5, 
+                                    includeSHA1, 
+                                    includeSHA256, 
+                                    false);
+
+                    FileResult result = reader.GetResult();
+                    return result;
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            });
+        }
+
+
+
+        private async void ExtractHashesFromContent(string[] files)
+        {
+            MarkBusy("Processing file contents...");
 
             List<string> md5Matches = new List<string>();
             List<string> sha1Matches = new List<string>();
