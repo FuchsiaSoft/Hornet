@@ -34,6 +34,7 @@ namespace Hornet.IO
         public bool RegexIncludeHTML { get; set; } = false;
 
         public bool HashIncludeJpegInPdf { get; set; } = false;
+        public bool HashIncludeZip { get; set; } = false;
 
         public IEnumerable<string> ExcludedExtensionsForTextAttempt { get; set; } = new string[0];
         /// <summary>
@@ -64,12 +65,6 @@ namespace Hornet.IO
         /// of a file to attempt hashing.  Zero is treated as unlimited.  Default is 0
         /// </summary>
         public long MaxSizeToAttemptHash { get; set; } = 0;
-
-        /// <summary>
-        /// Gets or sets a <see cref="bool"/> indicating whether or not to attempt
-        /// unpacking archive files and hashing their internals.  Default false
-        /// </summary>
-        public bool IncludeZip { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a <see cref="bool"/> indicating whether or not to hold

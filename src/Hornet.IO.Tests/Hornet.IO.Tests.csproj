@@ -88,7 +88,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="TestFiles\Zips\Single_File_No_Nesting.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Hornet.IO\Hornet.IO.csproj">
       <Project>{dcbcbc08-76a1-4b6d-9d8e-404d50e2a69a}</Project>
@@ -110,6 +114,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="TestFiles\Word\OpenOffice_DOCX_Example.docx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestFiles\Zips\Multiple_Files_No_Nesting.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="TestFiles\Zips\Multiple_Files_Nested_Once.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -1,6 +1,7 @@
 ﻿using Hornet.IO.FileManagement;
 using Hornet.IO.TextParsing;
 using Hornet.IO.TextParsing.ContentReaders;
+using Ionic.Zip;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -122,6 +123,140 @@ namespace Hornet.IO
             if (_includeMD5) result.MD5 = HashReader.GetMD5(stream, true);
             if (_includeSHA1) result.SHA1 = HashReader.GetSHA1(stream, true);
             if (_includeSHA256) result.SHA256 = HashReader.GetSHA256(stream, true);
+
+            if (_options.HashIncludeZip)
+            {
+                List<FileResult> embeddedHashResults = new List<FileResult>();
+                ReadZipForHashes(stream, embeddedHashResults);
+
+                result.EmbeddedResults.AddRange(embeddedHashResults);
+            }
+        }
+
+        //TODO: did this in a bit of a rush, needs a lot of re factoring to make it DRY
+        private void ReadZipForHashes(Stream stream, List<FileResult> embeddedHashResults)
+        {
+            stream.Seek(0, SeekOrigin.Begin);
+            if (ZipFile.IsZipFile(stream, true))
+            {
+                if (_options.UnzipInMemory)
+                {
+                    if (_options.MaxZipInMemorySize < 1 || _options.MaxZipInMemorySize > stream.Length)
+                    {
+                        //We use in-memory here
+                        stream.Seek(0, SeekOrigin.Begin);
+                        using (ZipFile zipFile = ZipFile.Read(stream))
+                        {
+                            foreach (ZipEntry entry in zipFile.Entries.Where(e => e.IsDirectory == false))
+                            {
+                                using (MemoryStream extractStream = new MemoryStream())
+                                {
+                                    entry.Extract(extractStream);
+                                    extractStream.Seek(0, SeekOrigin.Begin);
+
+                                    FileResult embeddedResult = new FileResult()
+                                    {
+                                        Name = entry.FileName,
+                                        Length = entry.UncompressedSize
+                                    };
+
+                                    if (_includeMD5) embeddedResult.MD5 = HashReader.GetMD5(extractStream, true);
+                                    if (_includeSHA1) embeddedResult.SHA1 = HashReader.GetSHA1(extractStream, true);
+                                    if (_includeSHA256) embeddedResult.SHA256 = HashReader.GetSHA256(extractStream, true);
+
+                                    embeddedHashResults.Add(embeddedResult);
+
+                                    extractStream.Seek(0, SeekOrigin.Begin);
+                                    if (ZipFile.IsZipFile(extractStream, true))
+                                    {
+                                        ReadZipForHashes(extractStream, embeddedHashResults);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (_options.UnzipToDiskIfTooBig)
+                    {
+                        //use local disk
+                        stream.Seek(0, SeekOrigin.Begin);
+                        using (ZipFile zipFile = ZipFile.Read(stream))
+                        {
+                            foreach (ZipEntry entry in zipFile.Entries.Where(e => e.IsDirectory == false))
+                            {
+                                string tempFileName = Path.GetTempFileName();
+                                
+                                using (FileStream extractStream = File.OpenWrite(tempFileName))
+                                {
+                                    entry.Extract(extractStream);
+                                    extractStream.Seek(0, SeekOrigin.Begin);
+
+                                    FileResult embeddedResult = new FileResult()
+                                    {
+                                        Name = entry.FileName,
+                                        Length = entry.UncompressedSize
+                                    };
+
+                                    if (_includeMD5) embeddedResult.MD5 = HashReader.GetMD5(extractStream, true);
+                                    if (_includeSHA1) embeddedResult.SHA1 = HashReader.GetSHA1(extractStream, true);
+                                    if (_includeSHA256) embeddedResult.SHA256 = HashReader.GetSHA256(extractStream, true);
+
+                                    embeddedHashResults.Add(embeddedResult);
+
+                                    extractStream.Seek(0, SeekOrigin.Begin);
+                                    if (ZipFile.IsZipFile(extractStream, true))
+                                    {
+                                        ReadZipForHashes(extractStream, embeddedHashResults);
+                                    }
+                                }
+
+                                File.Delete(tempFileName);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //we skip the zip here, nothing
+                    }
+                }
+                else
+                {
+                    //will always use local disk here
+                    stream.Seek(0, SeekOrigin.Begin);
+                    using (ZipFile zipFile = ZipFile.Read(stream))
+                    {
+                        foreach (ZipEntry entry in zipFile.Entries.Where(e => e.IsDirectory == false))
+                        {
+                            string tempFileName = Path.GetTempFileName();
+
+                            using (FileStream extractStream = File.OpenWrite(tempFileName))
+                            {
+                                entry.Extract(extractStream);
+                                extractStream.Seek(0, SeekOrigin.Begin);
+
+                                FileResult embeddedResult = new FileResult()
+                                {
+                                    Name = entry.FileName,
+                                    Length = entry.UncompressedSize
+                                };
+
+                                if (_includeMD5) embeddedResult.MD5 = HashReader.GetMD5(extractStream, true);
+                                if (_includeSHA1) embeddedResult.SHA1 = HashReader.GetSHA1(extractStream, true);
+                                if (_includeSHA256) embeddedResult.SHA256 = HashReader.GetSHA256(extractStream, true);
+
+                                embeddedHashResults.Add(embeddedResult);
+
+                                extractStream.Seek(0, SeekOrigin.Begin);
+                                if (ZipFile.IsZipFile(extractStream, true))
+                                {
+                                    ReadZipForHashes(extractStream, embeddedHashResults);
+                                }
+                            }
+
+                            File.Delete(tempFileName);
+                        }
+                    }
+                }
+            }
         }
 
         private bool CanRead(out FileInfo fileInfo)
