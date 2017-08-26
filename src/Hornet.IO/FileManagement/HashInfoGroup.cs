@@ -44,6 +44,7 @@ namespace Hornet.IO.FileManagement
         /// Gets the list of <see cref="HashResult"/> objects representing the matches
         /// that have been added for this group
         /// </summary>
+        [JsonIgnore]
         public List<HashResult> Matches { get; internal set; } = new List<HashResult>();
 
         public void SaveToFile(string filePath)

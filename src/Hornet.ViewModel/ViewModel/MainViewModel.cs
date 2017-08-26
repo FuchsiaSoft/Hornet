@@ -20,19 +20,6 @@ namespace Hornet.ViewModel.ViewModel
     {
         #region Binding Properties
 
-        //TODO: bind this somewhere in the main view
-        private string _ErrorMessage;
-
-        public string ErrorMessage
-        {
-            get { return _ErrorMessage; }
-            set
-            {
-                _ErrorMessage = value;
-                RaisePropertyChanged("ErrorMessage");
-            }
-        }
-
 
         private ObservableCollection<HashInfoGroup> _AvailableHashGroups
             = new ObservableCollection<HashInfoGroup>();
@@ -88,6 +75,8 @@ namespace Hornet.ViewModel.ViewModel
             }
         }
 
+        
+
 
         #endregion
 
@@ -98,18 +87,19 @@ namespace Hornet.ViewModel.ViewModel
 
         }
         
-
-      
-        public ICommand AddNewHashSetCommand { get { return new RelayCommand(NewHashSet, CanNewHashSet); } }
-
-        private bool CanNewHashSet()
-        {
-            return true;
-        }
+        public ICommand AddNewHashSetCommand { get { return new RelayCommand(NewHashSet); } }
 
         private void NewHashSet()
         {
             AddEditHashSetViewModel viewModel = new AddEditHashSetViewModel();
+            viewModel.ShowWindow(false);
+        }
+
+        public ICommand AddNewRegexSetCommand { get { return new RelayCommand(NewRegexSet); } }
+
+        private void NewRegexSet()
+        {
+            AddEditRegexSetViewModel viewModel = new AddEditRegexSetViewModel();
             viewModel.ShowWindow(false);
         }
 

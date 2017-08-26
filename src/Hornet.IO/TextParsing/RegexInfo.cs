@@ -34,6 +34,9 @@ namespace Hornet.IO.TextParsing
 
         public string Pattern { get; set; }
 
+        public string Remarks { get; set; }
+
+
         private bool TestPattern()
         {
             if (string.IsNullOrWhiteSpace(Pattern)) return false;

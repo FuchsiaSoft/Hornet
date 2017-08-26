@@ -97,6 +97,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DatabaseManagement\AddEditRegexSet.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="DatabaseManagement\ManageHashSets.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -115,6 +119,9 @@
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="DatabaseManagement\AddEditHashSet.xaml.cs">
       <DependentUpon>AddEditHashSet.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="DatabaseManagement\AddEditRegexSet.xaml.cs">
+      <DependentUpon>AddEditRegexSet.xaml</DependentUpon>
     </Compile>
     <Compile Include="DatabaseManagement\ManageHashSets.xaml.cs">
       <DependentUpon>ManageHashSets.xaml</DependentUpon>

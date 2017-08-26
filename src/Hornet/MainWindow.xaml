@@ -14,7 +14,7 @@
             <MenuItem Header="File">
                 <MenuItem Header="New">
                     <MenuItem Header="New hash set definition" Command="{Binding AddNewHashSetCommand}"/>
-                    <MenuItem Header="New regular expression set definition"/>
+                    <MenuItem Header="New regular expression set definition" Command="{Binding AddNewRegexSetCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Open">
                     <MenuItem Header="Open scan definition" InputGestureText="Ctrl+O"/>
