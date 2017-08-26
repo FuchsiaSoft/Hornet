@@ -119,5 +119,62 @@ namespace Hornet.IO.Tests
             Assert.IsTrue(result.EmbeddedResults.Count(e => e.SHA1 == knownSHA1) == 1);
             Assert.IsTrue(result.EmbeddedResults.Count(e => e.SHA256 == knownSHA256) == 1);
         }
+
+        /// <summary>
+        /// Tests to make sure that a hash is correct found in a zip file
+        /// where the zip archive contains the target file and some other non
+        /// matched files, where the target file is in a directory
+        /// </summary>
+        [TestMethod]
+        public void Zip_Multiple_Files_And_Folders_No_Nesting()
+        {
+            string knownFilePath = "TestFiles/Zips/Multiple_Files_And_Folders_No_Nesting.zip";
+            string knownMD5 = "97886269414575E12A8F6F92B1340100";
+            string knownSHA1 = "A96C5DC23FF9CF79EEBB6BC181A6BACE582F2060";
+            string knownSHA256 = "A9B5E893B658DBC08BAE3183DBA47324DE130D066C70DD1D7A93C9988646BAAC";
+
+            ScanOptions options = new ScanOptions()
+            {
+                HashIncludeZip = true,
+                MaxZipInMemorySize = 0,
+                UnzipInMemory = true
+            };
+
+            FileReader reader = new FileReader(knownFilePath, options, true, true, true, false);
+            FileResult result = reader.GetResult();
+
+            Assert.IsTrue(result.EmbeddedResults.Count > 1);
+            Assert.IsTrue(result.EmbeddedResults.Count(e => e.MD5 == knownMD5) == 1);
+            Assert.IsTrue(result.EmbeddedResults.Count(e => e.SHA1 == knownSHA1) == 1);
+            Assert.IsTrue(result.EmbeddedResults.Count(e => e.SHA256 == knownSHA256) == 1);
+        }
+
+        /// <summary>
+        /// Tests to make sure that the reading performs correctly when there
+        /// are several layers of nesting in zips
+        /// </summary>
+        [TestMethod]
+        public void Zip_Lots_Of_Nesting()
+        {
+            string knownFilePath = "TestFiles/Zips/Lots_Of_Nesting.zip";
+            string knownMD5 = "97886269414575E12A8F6F92B1340100";
+            string knownSHA1 = "A96C5DC23FF9CF79EEBB6BC181A6BACE582F2060";
+            string knownSHA256 = "A9B5E893B658DBC08BAE3183DBA47324DE130D066C70DD1D7A93C9988646BAAC";
+
+            ScanOptions options = new ScanOptions()
+            {
+                HashIncludeZip = true,
+                MaxZipInMemorySize = 0,
+                UnzipInMemory = true
+            };
+
+            FileReader reader = new FileReader(knownFilePath, options, true, true, true, false);
+            FileResult result = reader.GetResult();
+
+            Assert.IsTrue(result.EmbeddedResults.Count > 1);
+            Assert.IsTrue(result.EmbeddedResults.Count(e => e.MD5 == knownMD5) == 1);
+            Assert.IsTrue(result.EmbeddedResults.Count(e => e.SHA1 == knownSHA1) == 1);
+            Assert.IsTrue(result.EmbeddedResults.Count(e => e.SHA256 == knownSHA256) == 1);
+        }
     }
 }
