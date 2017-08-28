@@ -21,6 +21,16 @@
                 </StackPanel>
             </DataTemplate>
 
+            <DataTemplate x:Key="RegexGroupTemplate">
+                <StackPanel>
+                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap" FontSize="9" FontWeight="Bold"/>
+                    <TextBlock FontSize="9" TextWrapping="Wrap" FontWeight="Light">
+                        <Run Text="{Binding RegexInfos.Count, Mode=OneWay, StringFormat='#,##0'}"/>
+                        <Run Text="Regular expression(s)"/>
+                    </TextBlock>
+                </StackPanel>
+            </DataTemplate>
+
             <Style TargetType="TextBlock" x:Key="Header">
                 <Setter Property="FontWeight" Value="ExtraBold"/>
                 <Setter Property="Foreground" Value="Black"/>

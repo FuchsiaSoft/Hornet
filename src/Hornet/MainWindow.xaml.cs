@@ -43,5 +43,15 @@ namespace Hornet
                 ((MainViewModel)DataContext).HandleDroppedHashsetFiles(files);
             }
         }
+
+        private void dockRegex_Drop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                ((MainViewModel)DataContext).HandleDroppedRegexsetFiles(files);
+            }
+        }
     }
 }

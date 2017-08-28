@@ -129,6 +129,32 @@ namespace Hornet.ViewModel.ViewModel
             MarkFree();
         }
 
+        public async void HandleDroppedRegexsetFiles(string[] files)
+        {
+            MarkBusy("Processing regex set files...");
+
+            foreach (string filePath in files)
+            {
+                RegexInfoGroup group = await Task.Run(() =>
+                {
+                    try
+                    {
+                        RegexInfoGroup regexInfoGroup = RegexInfoGroup.FromFile(filePath);
+                        return regexInfoGroup;
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                        //TODO: error handling
+                    }
+                });
+
+                if (group != null) AvailableRegexGroups.Add(group);
+            }
+
+            MarkFree();
+        }
+
         public ICommand OpenHashSetCommand { get { return new RelayCommand(OpenHashSet); } }
 
         private async void OpenHashSet()
@@ -158,6 +184,40 @@ namespace Hornet.ViewModel.ViewModel
                 if (group != null)
                 {
                     AddEditHashSetViewModel viewModel = new AddEditHashSetViewModel(group);
+                    viewModel.ShowWindow();
+                }
+            }
+        }
+
+        public ICommand OpenRegexSetCommand { get { return new RelayCommand(OpenRegexSet); } }
+
+        private async void OpenRegexSet()
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Title = "Choose regex set file";
+            dlg.AddExtension = true;
+            dlg.DefaultExt = ".rset";
+            dlg.Filter = "Regex set definition (*.rset)|*.rset";
+            dlg.Multiselect = false;
+
+            if (dlg.ShowDialog() == true)
+            {
+                RegexInfoGroup group = await Task.Run(() =>
+                {
+                    try
+                    {
+                        return RegexInfoGroup.FromFile(dlg.FileName);
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                    }
+
+                });
+
+                if (group != null)
+                {
+                    AddEditRegexSetViewModel viewModel = new AddEditRegexSetViewModel(group);
                     viewModel.ShowWindow();
                 }
             }

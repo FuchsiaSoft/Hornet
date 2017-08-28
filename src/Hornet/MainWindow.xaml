@@ -20,7 +20,7 @@
                     <MenuItem Header="Open scan definition" InputGestureText="Ctrl+O"/>
                     <Separator/>
                     <MenuItem Header="Open hash set definition" Command="{Binding OpenHashSetCommand}"/>
-                    <MenuItem Header="Open regular expression set definition"/>
+                    <MenuItem Header="Open regular expression set definition" Command="{Binding OpenRegexSetCommand}"/>
                 </MenuItem>
                 
                 <MenuItem Header="Save current scan definition" InputGestureText="Ctrl+S"/>
@@ -72,7 +72,7 @@
                     </DockPanel>
                 </DockPanel>
                 <Separator Grid.Row="3" Margin="10,0,10,0" VerticalAlignment="Center"/>
-                <DockPanel Grid.Row="2">
+                <DockPanel Grid.Row="2" x:Name="dockRegex" AllowDrop="True" Drop="dockRegex_Drop">
                     <Border Style="{StaticResource HeaderBorder}" DockPanel.Dock="Top" Margin="3">
                         <StackPanel Orientation="Horizontal">
                             <Path Fill="Black" HorizontalAlignment="Right"
@@ -84,9 +84,9 @@
                     <DockPanel Grid.Column="0">
                         <TextBlock Style="{StaticResource SubHeader}" DockPanel.Dock="Top"
                                    Text="AVAILABLE REGULAR EXPRESSION SETS" Margin="3,3,3,1"/>
-                        <ListView Margin="3,0,3,0">
-                            available regex sets go here
-                        </ListView>
+                        <ListView Margin="3,0,3,0" ItemsSource="{Binding AvailableRegexGroups}"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                  ItemTemplate="{StaticResource RegexGroupTemplate}"/>
                     </DockPanel>
                 </DockPanel>
                 <DockPanel Grid.Row="4">
