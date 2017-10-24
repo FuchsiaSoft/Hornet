@@ -104,7 +104,7 @@
                             <StackPanel>
                                 <DockPanel>
                                     <Label Content="Directory:" Width="100" VerticalAlignment="Center" Padding="0"/>
-                                    <Button Width="100" DockPanel.Dock="Right" Margin="1">
+                                    <Button Width="100" DockPanel.Dock="Right" Margin="1" Command="{Binding BrowseDirCommand}">
                                         <StackPanel Orientation="Horizontal">
                                             <Path Fill="Orange" HorizontalAlignment="Right"
                                                 Stretch="Uniform" Margin="5,2,5,2" Width="15"
@@ -112,19 +112,19 @@
                                             <Label Content="Browse..." Padding="0"/>
                                         </StackPanel>
                                     </Button>
-                                    <TextBox Margin="1" VerticalContentAlignment="Center"/>
+                                    <TextBox x:Name="txtRoot" Margin="1" VerticalContentAlignment="Center" Text="{Binding RootDir}"/>
                                 </DockPanel>
                                 <DockPanel>
                                     <Label Width="100" Content="Domain:" Padding="0" VerticalAlignment="Center"/>
-                                    <TextBox Margin="1"/>
+                                    <TextBox x:Name="txtDomain" Margin="1" Text="{Binding Domain}"/>
                                 </DockPanel>
                                 <DockPanel>
                                     <Label Width="100" Content="User:" Padding="0" VerticalAlignment="Center"/>
-                                    <TextBox Margin="1"/>
+                                    <TextBox x:Name="txtUser" Margin="1" Text="{Binding Username}"/>
                                 </DockPanel>
                                 <DockPanel>
                                     <Label Width="100" Content="Password:" Padding="0" VerticalAlignment="Center"/>
-                                    <PasswordBox Margin="1"/>
+                                    <PasswordBox x:Name="pwd" Margin="1"/>
                                 </DockPanel>
                             </StackPanel>
 
@@ -132,7 +132,7 @@
 
                         <StackPanel Orientation="Horizontal">
 
-                            <Button HorizontalAlignment="Left" Margin="10,3,10,3" Width="80">
+                            <Button HorizontalAlignment="Left" Margin="10,3,10,3" Width="80" x:Name="btnStart" Click="btnStart_Click">
                                 <StackPanel Orientation="Horizontal">
                                     <Path Fill="ForestGreen" HorizontalAlignment="Right"
                                      Stretch="Uniform" Margin="5,2,5,2" Width="10"
@@ -379,8 +379,6 @@
                                         </TextBlock>
                                     </CheckBox>
                                     <CheckBox Content="Include attachments to MSG files (only includes complex formats selected above)" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
-                                    <CheckBox Content="Include MSG sender and recipient information" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
-                                    <CheckBox Content="Include MSG subject" IsEnabled="{Binding ElementName=chkIncludeMSG, Path=IsChecked}"/>
                                 </StackPanel>
                             </Grid>
 

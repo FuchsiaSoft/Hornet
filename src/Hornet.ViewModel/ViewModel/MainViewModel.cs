@@ -13,6 +13,7 @@ using System.Windows.Input;
 using GalaSoft.MvvmLight.CommandWpf;
 using Hornet.ViewModel.ViewModel.DatabaseManagement;
 using Microsoft.Win32;
+using System.Windows.Forms;
 
 namespace Hornet.ViewModel.ViewModel
 {
@@ -75,8 +76,43 @@ namespace Hornet.ViewModel.ViewModel
             }
         }
 
-        
 
+        private string _RootDir;
+
+        public string RootDir
+        {
+            get { return _RootDir; }
+            set
+            {
+                _RootDir = value;
+                RaisePropertyChanged("RootDir");
+            }
+        }
+
+
+        private string _Domain;
+
+        public string Domain
+        {
+            get { return _Domain; }
+            set
+            {
+                _Domain = value;
+                RaisePropertyChanged("Domain");
+            }
+        }
+
+        private string _Username;
+
+        public string Username
+        {
+            get { return _Username; }
+            set
+            {
+                _Username = value;
+                RaisePropertyChanged("Username");
+            }
+        }
 
         #endregion
 
@@ -159,7 +195,7 @@ namespace Hornet.ViewModel.ViewModel
 
         private async void OpenHashSet()
         {
-            OpenFileDialog dlg = new OpenFileDialog();
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.Title = "Choose hash set file";
             dlg.AddExtension = true;
             dlg.DefaultExt = ".hset";
@@ -193,7 +229,7 @@ namespace Hornet.ViewModel.ViewModel
 
         private async void OpenRegexSet()
         {
-            OpenFileDialog dlg = new OpenFileDialog();
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.Title = "Choose regex set file";
             dlg.AddExtension = true;
             dlg.DefaultExt = ".rset";
@@ -221,6 +257,33 @@ namespace Hornet.ViewModel.ViewModel
                     viewModel.ShowWindow();
                 }
             }
+        }
+
+        public ICommand BrowseDirCommand { get { return new RelayCommand(BrowseDir); } }
+
+        private void BrowseDir()
+        {
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
+
+            dlg.Description = "Choose a starting directory";
+            dlg.ShowNewFolderButton = false;
+
+            dlg.ShowDialog();
+
+            if (!string.IsNullOrWhiteSpace(dlg.SelectedPath))
+            {
+                RootDir = dlg.SelectedPath;
+            }
+        }
+
+        
+        public void StartScan()
+        {
+            //There is no ICommand for binding this method to the view,
+            //because the view is using a password box with a secure string,
+            //and there is no way to bind those controls, so this method is
+            //invoked directly from the view.  Check code behind for the 
+            //mainwindow.xaml.cs
         }
 
         #region Design time data

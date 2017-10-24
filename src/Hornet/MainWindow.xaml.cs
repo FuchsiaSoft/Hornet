@@ -1,7 +1,9 @@
 ﻿using Hornet.DatabaseManagement;
 using Hornet.ViewModel.ViewModel;
+using SimpleImpersonation;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,6 +54,29 @@ namespace Hornet
 
                 ((MainViewModel)DataContext).HandleDroppedRegexsetFiles(files);
             }
+        }
+
+        private void btnStart_Click(object sender, RoutedEventArgs e)
+        {
+            //check to make sure that the root dir provided by the user
+            //is accessible when impersonating as the provided credentials
+
+            try
+            {
+                using (Impersonation.LogonUser(txtDomain.Text, txtUser.Text, pwd.SecurePassword, LogonType.Interactive))
+                {
+                    DirectoryInfo dir = new DirectoryInfo(txtRoot.Text);
+                    dir.EnumerateDirectories();
+                }
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Could not read directory, check location and/or credentials", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+                return;
+            }
+
+            ((MainViewModel)DataContext).StartScan();
         }
     }
 }
