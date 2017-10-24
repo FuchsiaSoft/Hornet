@@ -316,7 +316,8 @@ namespace Hornet.IO
                 return false;
             }
 
-            if (fileInfo.Length > _options.MaxSizeToAttemptHash)
+            if (fileInfo.Length > _options.MaxSizeToAttemptHash &&
+                _options.MaxSizeToAttemptHash > 1)
             {
                 return false;
             }
