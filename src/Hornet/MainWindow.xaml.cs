@@ -76,7 +76,7 @@ namespace Hornet
                 return;
             }
 
-            ((MainViewModel)DataContext).StartScan();
+            ((MainViewModel)DataContext).StartScan(pwd.SecurePassword);
         }
     }
 }

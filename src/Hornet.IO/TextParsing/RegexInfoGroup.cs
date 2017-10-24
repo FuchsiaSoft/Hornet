@@ -15,7 +15,7 @@ namespace Hornet.IO.TextParsing
         public string Description { get; set; }
         public List<RegexInfo> RegexInfos { get; set; } = new List<RegexInfo>();
         [JsonIgnore]
-        public List<RegexResult> Matches { get; set; }
+        public List<RegexResult> Matches { get; set; } = new List<RegexResult>();
 
         public void SaveToFile(string filePath)
         {

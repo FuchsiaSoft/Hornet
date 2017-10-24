@@ -1,0 +1,45 @@
+﻿<Window x:Class="Hornet.ProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Hornet"
+        mc:Ignorable="d"
+        Title="ProgressWindow" Width="500"
+        ResizeMode="NoResize"
+        SizeToContent="Height">
+    <Grid>
+        <StackPanel Margin="5">
+            <DockPanel>
+                <Label Width="120" Content="Time elapsed"/>
+                <TextBlock VerticalAlignment="Center" Text="{Binding TimeElapsed, FallbackValue=Calculating...}"/>
+            </DockPanel>
+            <DockPanel>
+                <Label Width="120" Content="Total processed"/>
+                <TextBlock VerticalAlignment="Center" Text="{Binding TotalProcessed, FallbackValue=Calculating...}"/>
+            </DockPanel>
+            <DockPanel>
+                <Label Width="120" Content="Skipped"/>
+                <TextBlock VerticalAlignment="Center" Text="{Binding Skipped, StringFormat='#,##0', FallbackValue=Calculating...}"/>
+            </DockPanel>
+            <DockPanel>
+                <Label Width="120" Content="Hash matches"/>
+                <TextBlock VerticalAlignment="Center" Text="{Binding HashMatches, StringFormat='#,##0', FallbackValue=Calculating...}"/>
+            </DockPanel>
+            <DockPanel>
+                <Label Width="120" Content="Regex matches"/>
+                <TextBlock VerticalAlignment="Center" Text="{Binding RegexMatches, StringFormat='#,##0', FallbackValue=Calculating...}"/>
+            </DockPanel>
+            <DockPanel>
+                <Label Width="120" Content="Current queue size"/>
+                <TextBlock VerticalAlignment="Center" Text="{Binding QueueSize, StringFormat='#,##0', FallbackValue=Calculating...}"/>
+            </DockPanel>
+            <DockPanel>
+                <Label Width="120" Content="Progress"/>
+                <TextBlock VerticalAlignment="Center" Text="{Binding Progress, StringFormat='0.00%', FallbackValue=Calculating...}"/>
+                <ProgressBar Margin="5" IsIndeterminate="{Binding IsProgressIndeterminate, FallbackValue=true}"
+                             Minimum="0" Maximum="{Binding ProgressMax}" Value="{Binding ProgressValue}"/>
+            </DockPanel>
+        </StackPanel>
+    </Grid>
+</Window>

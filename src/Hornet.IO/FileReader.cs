@@ -56,6 +56,10 @@ namespace Hornet.IO
 
                     DoContentReading(stream, result);
 
+                    result.ResultType = ResultType.Read;
+                    result.Length = fileInfo.Length;
+                    result.Name = fileInfo.FullName;
+
                     return result;
                 }
             }
@@ -308,6 +312,11 @@ namespace Hornet.IO
                 _includeSHA1 == false && 
                 _includeSHA256 == false &&
                 _includeRegex == false)
+            {
+                return false;
+            }
+
+            if (fileInfo.Length > _options.MaxSizeToAttemptHash)
             {
                 return false;
             }

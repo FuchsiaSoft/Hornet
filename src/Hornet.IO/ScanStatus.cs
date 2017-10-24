@@ -80,6 +80,8 @@ namespace Hornet.IO
         /// </summary>
         public int TotalFileCount = 0;
 
+        public bool EnumerationFinished = false;
+
         public long TotalFilesSkipped = 0;
         public long TotalFilesSucceeded = 0;
         public long TotalFilesEncrypted = 0;

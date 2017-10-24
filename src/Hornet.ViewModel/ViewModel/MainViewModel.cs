@@ -14,6 +14,9 @@ using GalaSoft.MvvmLight.CommandWpf;
 using Hornet.ViewModel.ViewModel.DatabaseManagement;
 using Microsoft.Win32;
 using System.Windows.Forms;
+using Hornet.IO;
+using System.Security;
+using System.Net;
 
 namespace Hornet.ViewModel.ViewModel
 {
@@ -277,13 +280,40 @@ namespace Hornet.ViewModel.ViewModel
         }
 
         
-        public void StartScan()
+        public void StartScan(SecureString pwd)
         {
             //There is no ICommand for binding this method to the view,
             //because the view is using a password box with a secure string,
             //and there is no way to bind those controls, so this method is
             //invoked directly from the view.  Check code behind for the 
             //mainwindow.xaml.cs
+
+            NetworkCredential credentials = new NetworkCredential()
+            {
+                Domain = Domain,
+                SecurePassword = pwd,
+                UserName = Username
+            };
+
+            ScanOptions options = new ScanOptions()
+            {
+                Credentials = credentials,
+                RootDirectoryPath = RootDir,
+                MaxWorkerThreads = 3,
+                MaxSizeToAttemptHash = 419430400,
+                MaxSizeToTextDecode = 419430400,
+                AttemptTextDecode = false
+            };
+
+            options.HashGroups.AddRange(AvailableHashGroups);
+            options.RegexGroups.AddRange(AvailableRegexGroups);
+
+            HornetScanManager.StartScanAsync(options);
+
+            ProgressViewModel viewModel = new ProgressViewModel();
+            viewModel.ShowWindow();
+
+            CloseWindow();
         }
 
         #region Design time data

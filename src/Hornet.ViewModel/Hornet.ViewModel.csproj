@@ -87,6 +87,7 @@
     <Compile Include="ViewModel\DatabaseManagement\AddEditHashSetViewModel.cs" />
     <Compile Include="ViewModel\DatabaseManagement\AddEditRegexSetViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
+    <Compile Include="ViewModel\ProgressViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="ViewModel\WindowCreatingViewModel.cs" />
     <Compile Include="ViewModel\WindowMediator.cs" />

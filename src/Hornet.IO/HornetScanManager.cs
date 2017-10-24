@@ -54,6 +54,8 @@ namespace Hornet.IO
         private static ConcurrentStack<string> _backgroundDirectoryStack = new ConcurrentStack<string>();
         private static ConcurrentQueue<string> _fileWorkingQueue = new ConcurrentQueue<string>();
 
+        public static int CurrentQueueSize { get { return _fileWorkingQueue.Count; } }
+
         //Flags for maintaining state with all the different threads.
         private static bool _backgroundEnumerationFinished = false;
         private static bool _directoryEnumerationFinished = false;
@@ -150,6 +152,8 @@ namespace Hornet.IO
                 Status.ScanRunning = false;
                 AddNewScanEvent(ScanEventType.Finish, DateTime.Now);
             });
+
+            watcherThread.Start();
         }
 
         private static void DoWork()
@@ -186,6 +190,7 @@ namespace Hornet.IO
                 case ResultType.Read:
                     Interlocked.Add(ref Status.TotalBytesProcessed, fileResult.Length);
                     Interlocked.Increment(ref Status.TotalFilesSucceeded);
+                    Interlocked.Increment(ref Status.TotalBytesProcessed);
                     break;
 
                 case ResultType.Encrypted:
@@ -441,6 +446,7 @@ namespace Hornet.IO
                 }
 
                 _backgroundEnumerationFinished = true;
+                Status.EnumerationFinished = true;
             });
 
             thread.Start();

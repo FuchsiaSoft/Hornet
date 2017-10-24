@@ -26,8 +26,9 @@ namespace Hornet
                 WindowMediator.StartListening();
                 WindowMediator.Register<AddEditHashSetViewModel, AddEditHashSet>();
                 WindowMediator.Register<AddEditRegexSetViewModel, AddEditRegexSet>();
+                WindowMediator.Register<ProgressViewModel, ProgressWindow>();
             });
-            Thread.Sleep(7000);
+            Thread.Sleep(3000);
             splash.Close(TimeSpan.FromMilliseconds(5));
         }
     }
