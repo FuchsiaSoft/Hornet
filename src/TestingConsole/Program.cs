@@ -16,7 +16,21 @@ namespace TestingConsole
     {
         static void Main(string[] args)
         {
-            
+            ScanOptions options = new ScanOptions()
+            {
+                RegexGroups = new List<RegexInfoGroup>()
+                {
+                    new RegexInfoGroup()
+                    {
+                        RegexInfos = new List<RegexInfo>()
+                        {
+                            new RegexInfo() { Pattern = "(?i)(trigger)" }
+                        }
+                    }
+                }
+            };
+            FileReader reader = new FileReader(@"H:\Technical options CSE.pdf", options, true, true, true, true);
+            reader.GetResult();
         }
     }
 }

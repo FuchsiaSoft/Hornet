@@ -57,7 +57,7 @@ namespace Hornet.IO.TextParsing
         {
             if (_regex == null)
             {
-                _regex = new Regex(Pattern, RegexOptions.Compiled);
+                _regex = new Regex(Pattern);
             }
 
             return _regex;

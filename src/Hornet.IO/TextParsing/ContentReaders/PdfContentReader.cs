@@ -20,11 +20,10 @@ namespace Hornet.IO.TextParsing.ContentReaders
             {
                 using (PdfReader reader = new PdfReader(fileStream))
                 {
-                    ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
                     StringBuilder sb = new StringBuilder();
                     for (int i = 0; i < reader.NumberOfPages; i++)
                     {
-                        sb.Append(PdfTextExtractor.GetTextFromPage(reader, i + 1, strategy));
+                        sb.Append(PdfTextExtractor.GetTextFromPage(reader, i + 1));
                     }
                     result = sb.ToString();
                     return true;

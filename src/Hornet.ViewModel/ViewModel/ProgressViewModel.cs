@@ -1,6 +1,7 @@
 ﻿using Hornet.IO;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -149,9 +150,28 @@ namespace Hornet.ViewModel.ViewModel
                     UpdateBindings();
                     Thread.Sleep(500);                
                 }
+
+                GeneratePdf();
             });
 
             thread.Start();
+        }
+
+        private void GeneratePdf()
+        {
+            Stream pdfFileStream = HornetScanManager.Results.ToPdf();
+            string tempPath = Path.GetTempFileName();
+            File.Move(tempPath, tempPath += ".pdf");
+
+            using (FileStream stream = File.OpenWrite(tempPath))
+            {
+                pdfFileStream.Seek(0, SeekOrigin.Begin);
+                pdfFileStream.CopyTo(stream);
+            }
+
+            pdfFileStream.Dispose();
+
+            System.Diagnostics.Process.Start(tempPath);
         }
 
         private void UpdateBindings()

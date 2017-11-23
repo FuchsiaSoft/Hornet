@@ -349,10 +349,11 @@ namespace Hornet.ViewModel.ViewModel
             {
                 Credentials = credentials,
                 RootDirectoryPath = RootDir,
-                MaxWorkerThreads = 3,
-                MaxSizeToAttemptHash = 419430400,
-                MaxSizeToTextDecode = 419430400,
-                AttemptTextDecode = false
+                MaxWorkerThreads = 5,
+                MaxSizeToAttemptHash = 2097152,
+                MaxSizeToTextDecode = 2097152,
+                AttemptTextDecode = false,
+                HashIncludeZip = false
             };
 
             options.HashGroups.AddRange(AvailableHashGroups);

@@ -286,6 +286,29 @@ namespace Hornet.IO
 
         private Stream GetStream(FileInfo fileInfo)
         {
+            //TODO: temp code as for Should Parse, to get around longpath
+            //library throwing exception on file size
+
+            System.IO.FileInfo file = new System.IO.FileInfo(_filePath);
+            if (_options.HoldBufferInMemory)
+            {
+                long sizeLimit = _options.InMemoryFileSizeLimit < 1 ? 0 : _options.InMemoryFileSizeLimit;
+                if (sizeLimit == 0 || file.Length <= sizeLimit)
+                {
+                    MemoryStream memStream = new MemoryStream();
+                    using (FileStream fileStream = fileInfo.OpenRead())
+                    {
+                        fileStream.CopyTo(memStream);
+                        memStream.Seek(0, SeekOrigin.Begin);
+                    }
+                    return memStream;
+                }
+            }
+
+            return fileInfo.OpenRead();
+
+            //old code down here is fine with longpath fixed
+
             if (_options.HoldBufferInMemory)
             {
                 long sizeLimit = _options.InMemoryFileSizeLimit < 1 ? 0 : _options.InMemoryFileSizeLimit;
@@ -315,6 +338,30 @@ namespace Hornet.IO
             {
                 return false;
             }
+
+            //TODO: temp workaround as Pri.LongPath is throwing
+            //an exception for file length, need to investigate
+            try
+            {
+                System.IO.FileInfo file = new System.IO.FileInfo(_filePath);
+
+                if (file.Length > _options.MaxSizeToAttemptHash &&
+                _options.MaxSizeToAttemptHash > 1)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+
+            //OLD code here that should be fine when long path problem fixed.
 
             if (fileInfo.Length > _options.MaxSizeToAttemptHash &&
                 _options.MaxSizeToAttemptHash > 1)
