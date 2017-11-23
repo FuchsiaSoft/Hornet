@@ -117,6 +117,56 @@ namespace Hornet.ViewModel.ViewModel
             }
         }
 
+
+        private bool _HashJpegsInPdfs;
+
+        public bool HashJpegsInPdfs
+        {
+            get { return _HashJpegsInPdfs; }
+            set
+            {
+                _HashJpegsInPdfs = value;
+                RaisePropertyChanged("HashJpegsInPdfs");
+            }
+        }
+
+        private bool _HashFilesInOpenXml;
+
+        public bool HashFilesInOpenXml
+        {
+            get { return _HashFilesInOpenXml; }
+            set
+            {
+                _HashFilesInOpenXml = value;
+                RaisePropertyChanged("HashFilesInOpenXml");
+            }
+        }
+
+        private bool _HashFilesInZips;
+
+        public bool HashFilesInZips
+        {
+            get { return _HashFilesInZips; }
+            set
+            {
+                _HashFilesInZips = value;
+                RaisePropertyChanged("HashFilesInZips");
+            }
+        }
+
+        private bool _HashMsgAttachments;
+
+        public bool HashMsgAttachments
+        {
+            get { return _HashMsgAttachments; }
+            set
+            {
+                _HashMsgAttachments = value;
+                RaisePropertyChanged("HashMsgAttachments");
+            }
+        }
+
+
         #endregion
 
 
