@@ -349,7 +349,7 @@ namespace Hornet.ViewModel.ViewModel
             {
                 Credentials = credentials,
                 RootDirectoryPath = RootDir,
-                MaxWorkerThreads = 5,
+                MaxWorkerThreads = 10,
                 MaxSizeToAttemptHash = 2097152,
                 MaxSizeToTextDecode = 2097152,
                 AttemptTextDecode = false,
