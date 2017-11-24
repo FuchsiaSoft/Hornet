@@ -286,10 +286,10 @@ namespace Hornet.IO
                 for (int i = 0; i < matches.Count; i++)
                 {
                     int startPreviewIndex = 0;
-                    if (matches[i].Index > 100) startPreviewIndex = matches[i].Index - 100;
+                    if (matches[i].Index > 25) startPreviewIndex = matches[i].Index - 25;
 
                     int endPreviewIndex = fileResult.Content.Length - 1;
-                    if (matches[i].Index + 120 < endPreviewIndex) endPreviewIndex = matches[i].Index + 120;
+                    if (matches[i].Index + matches[i].Length + 25 < endPreviewIndex) endPreviewIndex = matches[i].Index + matches[i].Length + 25;
 
                     string previewText = fileResult.Content.Substring(startPreviewIndex, endPreviewIndex - startPreviewIndex);
                     matchedInfos.Add(new Tuple<RegexInfo, string>(regexInfo, previewText));

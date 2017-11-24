@@ -41,10 +41,14 @@ namespace Hornet.IO
 
             Section hashSection = doc.AddSection();
 
-            Paragraph hashHeaderPara = hashSection.AddParagraph("Hash Matches");
-            hashHeaderPara.Format.Font.Bold = true;
-            hashHeaderPara.Format.Font.Size = 20;
-            hashHeaderPara.Format.SpaceAfter = Unit.FromCentimeter(1);
+            if (HashGroups.Count() > 0)
+            {
+                Paragraph hashHeaderPara = hashSection.AddParagraph("Hash Matches");
+                hashHeaderPara.Format.Font.Bold = true;
+                hashHeaderPara.Format.Font.Size = 20;
+                hashHeaderPara.Format.SpaceAfter = Unit.FromCentimeter(1);
+            }
+            
 
             foreach (HashInfoGroup group in HashGroups)
             {
@@ -68,7 +72,7 @@ namespace Hornet.IO
 
                     Row row = table.AddRow();
                     row[0].AddParagraph("File Name:");
-                    row[1].AddParagraph(result.Name);
+                    row[1].AddParagraph(result.Name).Format.Font.Size = 7;
 
                     row = table.AddRow();
                     row[0].AddParagraph("Mime Type:");
@@ -117,10 +121,13 @@ namespace Hornet.IO
 
             Section regexSection = doc.AddSection();
 
-            Paragraph regexHeaderPara = regexSection.AddParagraph("Regex Matches");
-            regexHeaderPara.Format.Font.Bold = true;
-            regexHeaderPara.Format.Font.Size = 20;
-            regexHeaderPara.Format.SpaceAfter = Unit.FromCentimeter(1);
+            if (RegexGroups.Count() > 0)
+            {
+                Paragraph regexHeaderPara = regexSection.AddParagraph("Regex Matches");
+                regexHeaderPara.Format.Font.Bold = true;
+                regexHeaderPara.Format.Font.Size = 20;
+                regexHeaderPara.Format.SpaceAfter = Unit.FromCentimeter(1);
+            }
 
             foreach (RegexInfoGroup group in RegexGroups)
             {
@@ -144,7 +151,7 @@ namespace Hornet.IO
 
                     Row row = table.AddRow();
                     row[0].AddParagraph("File Name:");
-                    row[1].AddParagraph(result.Name);
+                    row[1].AddParagraph(result.Name).Format.Font.Size = 7;
 
                     row = table.AddRow();
                     row[0].AddParagraph("Mime Type:");
@@ -222,22 +229,41 @@ namespace Hornet.IO
 
                             contentPara.AddText("<<...");
 
-                            IEnumerable<string> subStrings = matchedInfo.Item1.AsRegex().Split(contentMatched);
+                            Match firstMatch = thisRegex.Matches(contentMatched)[0];
 
-                            foreach (string subString in subStrings)
+                            if (firstMatch.Index > 0)
                             {
-                                if (thisRegex.IsMatch(subString))
-                                {
-                                    Font font = new Font();
-                                    font.Color = Colors.OrangeRed;
-                                    font.Bold = true;
-                                    contentPara.AddFormattedText(RemoveLineEndings(subString), font);
-                                }
-                                else
-                                {
-                                    contentPara.AddText(RemoveLineEndings(subString));
-                                }
+                                contentPara.AddText(RemoveLineEndings(contentMatched.Substring(0, firstMatch.Index)));
                             }
+
+                            Font font = new Font();
+                            font.Color = Colors.OrangeRed;
+                            font.Bold = true;
+                            contentPara.AddFormattedText(RemoveLineEndings(firstMatch.Value), font);
+
+                            if (contentMatched.Length > firstMatch.Index + firstMatch.Length)
+                            {
+                                contentPara.AddText(RemoveLineEndings(contentMatched.Substring(firstMatch.Index + firstMatch.Length)));
+                            }
+
+                            //IEnumerable<string> splitString = contentMatched.Split(firstMatch.Value.ToCharArray());
+
+                            //IEnumerable<string> subStrings = matchedInfo.Item1.AsRegex().Split(contentMatched);
+
+                            //foreach (string subString in subStrings)
+                            //{
+                            //    if (thisRegex.IsMatch(subString))
+                            //    {
+                            //        Font font = new Font();
+                            //        font.Color = Colors.OrangeRed;
+                            //        font.Bold = true;
+                            //        contentPara.AddFormattedText(RemoveLineEndings(subString), font);
+                            //    }
+                            //    else
+                            //    {
+                            //        contentPara.AddText(RemoveLineEndings(subString));
+                            //    }
+                            //}
 
                             contentPara.AddText("...>>");
                         }

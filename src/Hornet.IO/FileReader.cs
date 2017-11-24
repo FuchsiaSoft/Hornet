@@ -339,29 +339,7 @@ namespace Hornet.IO
                 return false;
             }
 
-            //TODO: temp workaround as Pri.LongPath is throwing
-            //an exception for file length, need to investigate
-            try
-            {
-                System.IO.FileInfo file = new System.IO.FileInfo(_filePath);
-
-                if (file.Length > _options.MaxSizeToAttemptHash &&
-                _options.MaxSizeToAttemptHash > 1)
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-
-
-            //OLD code here that should be fine when long path problem fixed.
+            string extension = Path.GetExtension(_filePath.ToUpper());
 
             if (fileInfo.Length > _options.MaxSizeToAttemptHash &&
                 _options.MaxSizeToAttemptHash > 1)
@@ -369,7 +347,27 @@ namespace Hornet.IO
                 return false;
             }
 
-            return true;
+            //TODO: filter for file extensions here
+            switch (extension)
+            {
+                case ".TXT":
+                case ".CSV":
+                case ".XML":
+                case ".PDF":
+                case ".HTML":
+                case ".DOCX":
+                    return true;
+
+                default:
+                    if (_options.AttemptTextDecode)
+                    {
+                        if (!_options.ExcludedExtensionsForTextAttempt.Any(s => s.ToUpper() == extension))
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+            }
         }
     }
 }
