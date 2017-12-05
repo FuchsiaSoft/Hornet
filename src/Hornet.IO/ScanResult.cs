@@ -228,42 +228,31 @@ namespace Hornet.IO
                             contentPara.Format.Font.Size = 7;
 
                             contentPara.AddText("<<...");
-
-                            Match firstMatch = thisRegex.Matches(contentMatched)[0];
-
-                            if (firstMatch.Index > 0)
+                            try
                             {
-                                contentPara.AddText(RemoveLineEndings(contentMatched.Substring(0, firstMatch.Index)));
+                                //TODO: This was throwing some exceptions, need to look into it,
+                                //for now just made it show the content without any formatting
+                                Match firstMatch = thisRegex.Matches(contentMatched)[0];
+
+                                if (firstMatch.Index > 0)
+                                {
+                                    contentPara.AddText(RemoveLineEndings(contentMatched.Substring(0, firstMatch.Index)));
+                                }
+
+                                Font font = new Font();
+                                font.Color = Colors.OrangeRed;
+                                font.Bold = true;
+                                contentPara.AddFormattedText(RemoveLineEndings(firstMatch.Value), font);
+
+                                if (contentMatched.Length > firstMatch.Index + firstMatch.Length)
+                                {
+                                    contentPara.AddText(RemoveLineEndings(contentMatched.Substring(firstMatch.Index + firstMatch.Length)));
+                                }
                             }
-
-                            Font font = new Font();
-                            font.Color = Colors.OrangeRed;
-                            font.Bold = true;
-                            contentPara.AddFormattedText(RemoveLineEndings(firstMatch.Value), font);
-
-                            if (contentMatched.Length > firstMatch.Index + firstMatch.Length)
+                            catch (Exception)
                             {
-                                contentPara.AddText(RemoveLineEndings(contentMatched.Substring(firstMatch.Index + firstMatch.Length)));
+                                contentPara.AddText(contentMatched);
                             }
-
-                            //IEnumerable<string> splitString = contentMatched.Split(firstMatch.Value.ToCharArray());
-
-                            //IEnumerable<string> subStrings = matchedInfo.Item1.AsRegex().Split(contentMatched);
-
-                            //foreach (string subString in subStrings)
-                            //{
-                            //    if (thisRegex.IsMatch(subString))
-                            //    {
-                            //        Font font = new Font();
-                            //        font.Color = Colors.OrangeRed;
-                            //        font.Bold = true;
-                            //        contentPara.AddFormattedText(RemoveLineEndings(subString), font);
-                            //    }
-                            //    else
-                            //    {
-                            //        contentPara.AddText(RemoveLineEndings(subString));
-                            //    }
-                            //}
 
                             contentPara.AddText("...>>");
                         }
@@ -297,7 +286,7 @@ namespace Hornet.IO
 
             Style style = migraDocument.Styles["Normal"];
 
-            style.Font.Name = "Courier New";
+            style.Font.Name = "Arial";
             style.Font.Size = 11;
             style.Font.Color = Colors.Black;
         }

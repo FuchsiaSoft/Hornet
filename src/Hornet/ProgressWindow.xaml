@@ -5,32 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Hornet"
         mc:Ignorable="d"
-        Title="ProgressWindow" Width="600"
+        Title="ProgressWindow" Width="620" Height="500"
         ResizeMode="CanResizeWithGrip">
     <Grid>
         <DockPanel Margin="5">
             <WrapPanel DockPanel.Dock="Top">
-                <DockPanel Width="240">
+                <DockPanel Width="300">
                     <Label Width="120" Content="Time elapsed"/>
                     <TextBlock VerticalAlignment="Center" Text="{Binding TimeElapsed, FallbackValue=Calculating...}"/>
                 </DockPanel>
-                <DockPanel Width="240">
+                <DockPanel Width="300">
                     <Label Width="120" Content="Total processed"/>
                     <TextBlock VerticalAlignment="Center" Text="{Binding TotalProcessed, FallbackValue=Calculating...}"/>
                 </DockPanel>
-                <DockPanel Width="240">
+                <DockPanel Width="300">
                     <Label Width="120" Content="Skipped"/>
                     <TextBlock VerticalAlignment="Center" Text="{Binding Skipped, StringFormat='#,##0', FallbackValue=Calculating...}"/>
                 </DockPanel>
-                <DockPanel Width="240">
+                <DockPanel Width="300">
                     <Label Width="120" Content="Hash matches"/>
                     <TextBlock VerticalAlignment="Center" Text="{Binding HashMatches, StringFormat='#,##0', FallbackValue=Calculating...}"/>
                 </DockPanel>
-                <DockPanel Width="240">
+                <DockPanel Width="300">
                     <Label Width="120" Content="Regex matches"/>
                     <TextBlock VerticalAlignment="Center" Text="{Binding RegexMatches, StringFormat='#,##0', FallbackValue=Calculating...}"/>
                 </DockPanel>
-                <DockPanel Width="240">
+                <DockPanel Width="300">
                     <Label Width="120" Content="Current queue size"/>
                     <TextBlock VerticalAlignment="Center" Text="{Binding QueueSize, StringFormat='#,##0', FallbackValue=Calculating...}"/>
                 </DockPanel>
@@ -89,8 +89,14 @@
                             <TextBlock Style="{StaticResource Header}" Text="REGULAR EXPRESSION MATCHES" Margin="5,3,5,3"/>
                         </StackPanel>
                     </Border>
-                    <DataGrid Margin="3">
-
+                    <DataGrid Margin="3" AutoGenerateColumns="False"
+                              IsReadOnly="True" ItemsSource="{Binding RegexMatchList}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="File Name" Width="200" Binding="{Binding ShortName}"/>
+                            <DataGridTextColumn Header="Matches" Binding="{Binding MatchCount}"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding Size}" SortMemberPath="Length"/>
+                            <DataGridTextColumn Header="Full Path" Binding="{Binding Name}"/>
+                        </DataGrid.Columns>
                     </DataGrid>
                 </DockPanel>
             </Grid>

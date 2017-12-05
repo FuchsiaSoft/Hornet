@@ -35,6 +35,6 @@ namespace Hornet.IO.TextParsing
         /// <summary>
         /// The <see cref="RegexInfo"/> objects that were matched
         /// </summary>
-        public IEnumerable<Tuple<RegexInfo, string>> MatchedRegexInfos { get; internal set; }
+        public List<Tuple<RegexInfo, string>> MatchedRegexInfos { get; internal set; }
     }
 }

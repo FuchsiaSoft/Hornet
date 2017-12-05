@@ -1,11 +1,14 @@
 ﻿using Hornet.IO;
+using Hornet.IO.TextParsing;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Hornet.ViewModel.ViewModel
 {
@@ -55,9 +58,9 @@ namespace Hornet.ViewModel.ViewModel
         }
 
 
-        private long _HashMatches;
+        private int _HashMatches;
 
-        public long HashMatches
+        public int HashMatches
         {
             get { return _HashMatches; }
             set
@@ -68,9 +71,9 @@ namespace Hornet.ViewModel.ViewModel
         }
 
 
-        private long _RegexMatches;
+        private int _RegexMatches;
 
-        public long RegexMatches
+        public int RegexMatches
         {
             get { return _RegexMatches; }
             set
@@ -139,6 +142,23 @@ namespace Hornet.ViewModel.ViewModel
                 RaisePropertyChanged("Progress");
             }
         }
+
+        private HashSet<RegexResult> _regexMatchesSeen = new HashSet<RegexResult>();
+
+        private ObservableCollection<object> _RegexMatchList 
+            = new ObservableCollection<object>();
+
+        public ObservableCollection<object> RegexMatchList
+        {
+            get { return _RegexMatchList; }
+            set
+            {
+                _RegexMatchList = value;
+                RaisePropertyChanged("RegexMatchList");
+            }
+        }
+
+
 
 
         private void StartMonitor()
@@ -222,6 +242,31 @@ namespace Hornet.ViewModel.ViewModel
             else
             {
                 IsProgressIndeterminate = true;
+            }
+
+            foreach (var group in HornetScanManager.Results.RegexGroups)
+            {
+                for (int i = 0; i < group.Matches.Count; i++)
+                {
+                    var result = group.Matches[i];
+
+                    if (!_regexMatchesSeen.Contains(result))
+                    {
+                        _regexMatchesSeen.Add(result);
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            RegexMatchList.Add(new
+                            {
+                                result.ShortName,
+                                result.Name,
+                                result.Length,
+                                Size = GetFriendlySize(result.Length),
+                                result.MimeType,
+                                MatchCount = result.MatchedRegexInfos.Count
+                            });
+                        });
+                    }
+                }
             }
         }
 

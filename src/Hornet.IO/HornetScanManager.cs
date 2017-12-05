@@ -170,6 +170,10 @@ namespace Hornet.IO
 
                     if (fileResult.ResultType == ResultType.Read) CheckResult(fileResult);
                 }
+                else
+                {
+                    Thread.Sleep(100);
+                }
             }
         }
 
